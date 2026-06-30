@@ -11,6 +11,7 @@ public class NFA implements Automata<Integer>{
     private final Integer startState;
     private final Map<Integer, Map<Character,Set<Integer>>> transitionMap;
     private final Map<Integer,String> stateLabelMap;
+    public static final char EPSILON = 'ε';
 
     public NFA(
         Integer startState, 
@@ -56,11 +57,6 @@ public class NFA implements Automata<Integer>{
     @Override
     public Map<Integer, String> getStateLabelMap() {
         return stateLabelMap;
-    }
-
-
-
-
-    
+    }  
 
 }
