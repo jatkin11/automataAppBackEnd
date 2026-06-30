@@ -3,7 +3,7 @@ package com.jakeatkins.automataappbackend.automata;
 import java.util.Map;
 import java.util.Set;
 
-public class NFA implements Automata<Integer>{
+public class NFA implements Automata{
     
     private final Set<Integer> states;
     private final Set<Integer> acceptingStates;

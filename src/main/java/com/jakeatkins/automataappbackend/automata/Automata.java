@@ -3,18 +3,18 @@ package com.jakeatkins.automataappbackend.automata;
 import java.util.Map;
 import java.util.Set;
 
-public interface Automata<T> {
+public interface Automata {
 
         Set<Character> getAlphabet();
 
-        T getStartState();
+        Integer getStartState();
 
-        Set<T> getAcceptingStates();
+        Set<Integer> getAcceptingStates();
 
-        Set<T> getStates();
+        Set<Integer> getStates();
 
-        Map<T, Map<Character, Set<T>>> getTransitionMap();
+        Map<Integer, Map<Character, Set<Integer>>> getTransitionMap();
 
-        Map<T, String> getStateLabelMap();
+        Map<Integer, String> getStateLabelMap();
 
 }
