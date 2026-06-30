@@ -17,4 +17,6 @@ public interface Automata {
 
         Map<Integer, String> getStateLabelMap();
 
+        String getLabel(Integer state);
+
 }

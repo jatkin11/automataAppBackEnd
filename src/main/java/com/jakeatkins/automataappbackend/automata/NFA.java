@@ -59,4 +59,9 @@ public class NFA implements Automata{
         return stateLabelMap;
     }  
 
+    @Override
+    public String getLabel(Integer state){
+        return stateLabelMap.get(state);
+    }
+
 }
