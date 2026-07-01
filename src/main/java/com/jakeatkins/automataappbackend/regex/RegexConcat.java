@@ -1,6 +1,6 @@
 package com.jakeatkins.automataappbackend.regex;
 
-public class RegexConcat {
+public class RegexConcat implements RegexToken{
     private final RegexToken left;
     private final RegexToken right;
 
