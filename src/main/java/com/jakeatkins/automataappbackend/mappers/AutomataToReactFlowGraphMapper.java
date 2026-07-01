@@ -1,9 +1,12 @@
 package com.jakeatkins.automataappbackend.mappers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.jakeatkins.automataappbackend.automata.Automata;
 import com.jakeatkins.automataappbackend.automata.NFA;
@@ -16,14 +19,16 @@ import com.jakeatkins.automataappbackend.dto.ReactFlowNode;
 
 public class AutomataToReactFlowGraphMapper {
     
-    private static final String edgeType = "bezier";
+    private static final String EDGE_TYPE = "bezier";
+    private record SourceTargetPairStates(Integer source, Integer target){};
 
     public static ReactFlowGraph fromAutomata(Automata automata){
         return new ReactFlowGraph(getAutomataType(automata),createReactFlowEdges(automata), createReactFlowNodes(automata));
     }
 
     public static List<ReactFlowEdge> createReactFlowEdges(Automata automata){
-        List<ReactFlowEdge> edges = new ArrayList<>();    
+        List<ReactFlowEdge> edges = new ArrayList<>();
+        Map<SourceTargetPairStates,Set<Character>> groupedLabelsPerSourceTargetMap = new HashMap<>();    
         
         for(Map.Entry<Integer, Map<Character,Set<Integer>>> mapSource : automata.getTransitionMap().entrySet()){
 
@@ -39,17 +44,31 @@ public class AutomataToReactFlowGraphMapper {
 
                 for(Integer target : transitionToMapTarget){
 
-                    ReactFlowEdge e = new ReactFlowEdge(
-                        generateEdgeId(source, target, symbol),
-                        generateNodeId(source),
-                        generateNodeId(target),
-                        String.valueOf(symbol),
-                        edgeType
-                    );
-                    edges.add(e);
+                SourceTargetPairStates temp = new SourceTargetPairStates(source,target);
+
+                groupedLabelsPerSourceTargetMap.computeIfAbsent(temp, r -> new HashSet<>()).add(symbol);
                 }
             }
         }
+
+        for(Map.Entry<SourceTargetPairStates,Set<Character>> pair: groupedLabelsPerSourceTargetMap.entrySet()){
+            
+            SourceTargetPairStates sourceTarget = pair.getKey();
+            Integer pairSource = sourceTarget.source();
+            Integer pairTarget = sourceTarget.target();
+            Set<Character> groupedLabels = pair.getValue();
+            String groupedLabelsString = groupedLabels.stream().sorted().map(r->String.valueOf(r)).collect(Collectors.joining(","));
+
+            ReactFlowEdge e = new ReactFlowEdge(
+                generateEdgeId(pairSource, pairTarget, groupedLabelsString),
+                generateNodeId(pairSource),
+                generateNodeId(pairTarget),
+                groupedLabelsString,
+                EDGE_TYPE
+            );
+            edges.add(e);
+        }
+
         return edges;
     }
 
@@ -71,11 +90,12 @@ public class AutomataToReactFlowGraphMapper {
         return "q" + state;
     }
 
-    private static String generateEdgeId(Integer source, Integer target, char symbol){
-        return generateNodeId(source) + "-" + symbol + "->" + generateNodeId(target);
+    private static String generateEdgeId(Integer source, Integer target, String symbols){
+        return generateNodeId(source) + "-" + symbols + "->" + generateNodeId(target);
 
     }
 
+    //NEED TO ADD VALIDATION HERE
     private static String getAutomataType(Automata automata){
         return automata instanceof NFA ? "NFA" : "DFA";
     }
