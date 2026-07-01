@@ -1,7 +1,10 @@
 package com.jakeatkins.automataappbackend.algos;
 
+import com.jakeatkins.automataappbackend.regex.RegexConcat;
+import com.jakeatkins.automataappbackend.regex.RegexStarred;
+import com.jakeatkins.automataappbackend.regex.RegexSymbol;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
-import com.jakeatkins.automataappbackend.regex.*;
+import com.jakeatkins.automataappbackend.regex.RegexUnion;
 
 public class RegexTokeniser {
     
@@ -25,25 +28,44 @@ public class RegexTokeniser {
         while(currentChar()=='|'){
             consumeChar('|');
             RegexToken right = concatenate();
-            left = RegexUnion(left,right);
+            left = new RegexUnion(left,right);
         }
         return left;
     }
 
     //NEED TO ADD VALIDATION
     private RegexToken concatenate(){
-
+        RegexToken left = star();
+        while(hasRemaining() && isNewExpression(currentChar())){
+            RegexToken right = star();
+            left = new RegexConcat(left, right);
+        }
+        return left;
     }
 
     //NEED TO ADD VALIDATION
     private RegexToken star(){
+        RegexToken token = symbolise();
 
-
+        while(hasRemaining() && currentChar()=='*'){
+            consumeChar('*');
+            token = new RegexStarred(token);
+        }
+        return token;
     }
 
     //NEED TO ADD VALIDATION
     private RegexToken symbolise(){
+        if(currentChar() == '('){
+            consumeChar('(');
+            RegexToken token = unionise();
+            consumeChar(')');
+            return token;
+        }
 
+        char symbol = currentChar();
+        consumeChar(symbol);
+        return new RegexSymbol(symbol);
     }
 
     //NEED TO ADD VALIDATION
