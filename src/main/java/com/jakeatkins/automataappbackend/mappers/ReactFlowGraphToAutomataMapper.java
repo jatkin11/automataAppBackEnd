@@ -58,7 +58,7 @@ public class ReactFlowGraphToAutomataMapper {
 
 
     //NEED TO REOMOVE DUPLICATOIN HERE, USE A HELPER FUNCTION TO TRANSLATE FROM REACT GRAPH TO EITHER NFA/DFA 
-    public static DFA reactFlowGrapDfa(ReactFlowGraph graph){
+    public static DFA reactFlowGraphToDfa(ReactFlowGraph graph){
         Set<Integer> states = new HashSet<>();
         Integer startState = null;
         Set<Integer> acceptingStates = new HashSet<>();
