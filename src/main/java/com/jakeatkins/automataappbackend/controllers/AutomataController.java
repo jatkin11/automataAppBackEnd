@@ -1,9 +1,12 @@
 package com.jakeatkins.automataappbackend.controllers;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jakeatkins.automataappbackend.dto.ReactFlowGraph;
 import com.jakeatkins.automataappbackend.services.AutomataService;
 
 @RestController
@@ -15,6 +18,11 @@ public class AutomataController {
 
     public AutomataController(AutomataService automataService) {
         this.automataService = automataService;
+    }
+
+    @PostMapping("/convert-to-dfa")
+    public ReactFlowGraph convertToDfa(@RequestBody ReactFlowGraph graph) {
+        return automataService.convertToDfa(graph);
     }
 
 
