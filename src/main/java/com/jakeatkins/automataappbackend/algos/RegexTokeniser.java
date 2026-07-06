@@ -1,6 +1,8 @@
 package com.jakeatkins.automataappbackend.algos;
 
 import com.jakeatkins.automataappbackend.regex.RegexConcat;
+import com.jakeatkins.automataappbackend.regex.RegexEmptySet;
+import com.jakeatkins.automataappbackend.regex.RegexEpsilon;
 import com.jakeatkins.automataappbackend.regex.RegexStarred;
 import com.jakeatkins.automataappbackend.regex.RegexSymbol;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
@@ -8,6 +10,8 @@ import com.jakeatkins.automataappbackend.regex.RegexUnion;
 
 public class RegexTokeniser {
     
+    private final char EPSILON = 'ε';
+    private final char EMPTY_SET = '∅';
     private String regexString;
     private int position = 0;
     
@@ -25,7 +29,7 @@ public class RegexTokeniser {
     private RegexToken unionise(){
         RegexToken left = concatenate();
 
-        while(currentChar()=='|'){
+        while(hasRemaining() && currentChar()=='|'){
             consumeChar('|');
             RegexToken right = concatenate();
             left = new RegexUnion(left,right);
@@ -64,6 +68,16 @@ public class RegexTokeniser {
         }
 
         char symbol = currentChar();
+
+        if(symbol == EPSILON){
+            consumeChar(symbol);
+            return new RegexEpsilon();
+        }
+
+        if(symbol == EMPTY_SET){
+            consumeChar(symbol);
+            return new RegexEmptySet();
+        }
         consumeChar(symbol);
         return new RegexSymbol(symbol);
     }
@@ -75,12 +89,12 @@ public class RegexTokeniser {
 
     //NEED TO ADD VALIDATION
     private boolean isNewExpression(char c){
-        return c=='(' || Character.isLetterOrDigit(c);
+        return c=='(' || Character.isLetterOrDigit(c) || c== EPSILON || c == EMPTY_SET ;
     }
 
     //NEED TO ADD VALIDATION
     private void consumeChar(char c){
-        if(!hasRemaining() || currentChar()!=c){
+        if(!hasRemaining() || currentChar()!=c ){
             throw new IllegalArgumentException("invalid consumption");
         }
         position++;
