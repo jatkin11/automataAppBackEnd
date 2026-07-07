@@ -25,5 +25,10 @@ public class AutomataController {
         return automataService.convertToDfa(graph);
     }
 
+    @PostMapping("/convert-to-nfa")
+    public ReactFlowGraph convertToNfa(@RequestBody String regexInput) {
+        return automataService.convertToNfa(regexInput);
+    }
+
 
 }
