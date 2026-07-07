@@ -12,8 +12,9 @@ public class RegexTokeniser {
     
     private final char EPSILON = 'ε';
     private final char EMPTY_SET = '∅';
-    private String regexString;
+    private final String regexString;
     private int position = 0;
+    private int symbolPosition = 1;
     
     //NEED TO ADD VALIDATION
     public RegexTokeniser(String regexString){
@@ -79,7 +80,7 @@ public class RegexTokeniser {
             return new RegexEmptySet();
         }
         consumeChar(symbol);
-        return new RegexSymbol(symbol);
+        return new RegexSymbol(symbol,symbolPosition++);
     }
 
     //NEED TO ADD VALIDATION
