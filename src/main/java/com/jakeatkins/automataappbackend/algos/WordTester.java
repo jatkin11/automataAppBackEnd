@@ -11,6 +11,7 @@ import com.jakeatkins.automataappbackend.regex.RegexToken;
 
 public class WordTester {
 
+//need to add better validation
 public static boolean testAutomata(Automata automata, String word){
     if (automata == null || word == null){
         return false;
@@ -42,6 +43,7 @@ public static boolean testAutomata(Automata automata, String word){
     return false;
 }
 
+    //need to add better validation
     public static boolean testRegexString(String regex, String word){
         if(regex == null || word == null){
             return false;
