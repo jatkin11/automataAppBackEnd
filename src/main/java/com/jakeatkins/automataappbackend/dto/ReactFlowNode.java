@@ -5,14 +5,16 @@ public class ReactFlowNode {
     private String id;
     private Position position;
     private NodeData data;
+    private String type;//required for front end custom nodes in react flow
 
 
     public ReactFlowNode(){}
 
-    public ReactFlowNode(String id, Position position, NodeData data){
+    public ReactFlowNode(String id, Position position, NodeData data, String type){
         this.id = id;
         this.position = position;
         this.data = data;
+        this.type = type;
     }
 
     public String getId() {
@@ -37,6 +39,14 @@ public class ReactFlowNode {
 
     public void setData(NodeData data) {
         this.data = data;
+    }
+
+    public String getType(){
+        return this.type;
+    }
+
+    public void setType(String type){
+        this.type = type;
     }
 
     

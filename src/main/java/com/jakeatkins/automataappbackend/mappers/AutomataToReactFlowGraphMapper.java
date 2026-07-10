@@ -19,7 +19,8 @@ import com.jakeatkins.automataappbackend.dto.ReactFlowNode;
 
 public class AutomataToReactFlowGraphMapper {
     
-    private static final String EDGE_TYPE = "bezier";
+    private static final String NODE_TYPE = "custom";
+    private static final String EDGE_TYPE = "default";
     private record SourceTargetPairStates(Integer source, Integer target){};
 
     public static ReactFlowGraph fromAutomata(Automata automata){
@@ -82,7 +83,8 @@ public class AutomataToReactFlowGraphMapper {
                 automata.getLabel(r),
                 automata.getStartState().equals(r),
                 automata.getAcceptingStates().contains(r)
-            ))
+            ),NODE_TYPE)
+            
         ).toList();
     }
 
