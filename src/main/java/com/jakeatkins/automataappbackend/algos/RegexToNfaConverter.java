@@ -85,7 +85,7 @@ public class RegexToNfaConverter {
                                             .collect(Collectors.toSet());
 
             return new CurrentState(nullType, firstPositions, lastPositions);
-            
+
         }
 
         if(regex instanceof RegexConcat r){
