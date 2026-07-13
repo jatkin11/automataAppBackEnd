@@ -49,5 +49,10 @@ public class AutomataController {
         return automataService.convertToRegexString(graph);
     }
 
+    @PostMapping("/minimise-dfa")
+    public ReactFlowGraph minimiseDfa(@RequestBody ReactFlowGraph graph){
+        return automataService.minimiseDfa(graph);
+    }
+
 
 }

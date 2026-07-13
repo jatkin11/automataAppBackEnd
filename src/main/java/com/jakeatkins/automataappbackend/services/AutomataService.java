@@ -3,6 +3,7 @@ package com.jakeatkins.automataappbackend.services;
 import org.springframework.stereotype.Service;
 
 import com.jakeatkins.automataappbackend.algos.AutomataToRegexConverter;
+import com.jakeatkins.automataappbackend.algos.DfaMinimiser;
 import com.jakeatkins.automataappbackend.algos.NfaToDfaConverter;
 import com.jakeatkins.automataappbackend.algos.RegexToNfaConverter;
 import com.jakeatkins.automataappbackend.algos.RegexTokenToStringConverter;
@@ -49,5 +50,10 @@ public class AutomataService {
         RegexToken regex = new AutomataToRegexConverter(nfa).convert();
         return new RegexString(RegexTokenToStringConverter.convert(regex));
     }
- 
-}
+
+    public ReactFlowGraph minimiseDfa(ReactFlowGraph graph) {
+        DFA dfa = ReactFlowGraphToAutomataMapper.reactFlowGraphToDfa(graph);
+        DFA minimisedDFA = DfaMinimiser.minimise(dfa);
+        return AutomataToReactFlowGraphMapper.fromAutomata(minimisedDFA);
+    }
+ }
