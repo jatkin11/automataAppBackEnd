@@ -60,8 +60,8 @@ public class RegexToNfaConverter {
     public CurrentState calculateCurrentState(RegexToken regex){
         
         if(regex instanceof RegexSymbol r){
-            Integer position = r.getGlushkovPosition();
-            symbolPositionMap.put(position, r.getSymbol());
+            Integer position = r.position();
+            symbolPositionMap.put(position, r.symbol());
             return new CurrentState(false,Set.of(position),Set.of(position));
         }
 
@@ -74,8 +74,8 @@ public class RegexToNfaConverter {
         }
 
         if(regex instanceof RegexUnion r){
-            CurrentState left = calculateCurrentState(r.getLeft());
-            CurrentState right = calculateCurrentState(r.getRight());
+            CurrentState left = calculateCurrentState(r.left());
+            CurrentState right = calculateCurrentState(r.right());
 
             boolean nullType = left.nullType() || right.nullType();
 
@@ -89,8 +89,8 @@ public class RegexToNfaConverter {
         }
 
         if(regex instanceof RegexConcat r){
-            CurrentState left = calculateCurrentState(r.getLeft());
-            CurrentState right = calculateCurrentState(r.getRight());
+            CurrentState left = calculateCurrentState(r.left());
+            CurrentState right = calculateCurrentState(r.right());
 
             boolean nullType = left.nullType() && right.nullType();
 
@@ -122,7 +122,7 @@ public class RegexToNfaConverter {
         }
 
         if(regex instanceof RegexStarred r){
-            CurrentState starred = calculateCurrentState(r.getStarredRegex());
+            CurrentState starred = calculateCurrentState(r.starredRegex());
 
             for(Integer x: starred.lastPositions()){
                 for(Integer y: starred.firstPositions()){

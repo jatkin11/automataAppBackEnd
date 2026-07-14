@@ -54,5 +54,4 @@ public class AutomataController {
         return automataService.minimiseDfa(graph);
     }
 
-
 }

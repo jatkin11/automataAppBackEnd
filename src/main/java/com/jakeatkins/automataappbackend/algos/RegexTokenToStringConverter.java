@@ -16,12 +16,12 @@ public class RegexTokenToStringConverter {
     public static String convert(RegexToken regex){
 
         return switch (regex) {
-            case RegexSymbol r-> String.valueOf(r.getSymbol());
+            case RegexSymbol r-> String.valueOf(r.symbol());
             case RegexEpsilon r -> String.valueOf(EPSILON);
             case RegexEmptySet r-> String.valueOf(EMPTY_SET);
-            case RegexStarred r-> "(" + convert(r.getStarredRegex()) + ")*";
-            case RegexConcat r-> "(" + convert(r.getLeft()) + convert(r.getRight()) + ")";
-            case RegexUnion r-> "(" + convert(r.getLeft()) + "|" + convert(r.getRight()) + ")";
+            case RegexStarred r-> "(" + convert(r.starredRegex()) + ")*";
+            case RegexConcat r-> "(" + convert(r.left()) + convert(r.right()) + ")";
+            case RegexUnion r-> "(" + convert(r.left()) + "|" + convert(r.right()) + ")";
             default -> throw new IllegalArgumentException("Invalid regex");};
     }
 }

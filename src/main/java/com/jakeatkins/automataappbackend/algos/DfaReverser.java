@@ -40,7 +40,7 @@ public class DfaReverser {
         Map<Integer,String> newStateLabelMap = new HashMap<>();
 
         for(Integer state : newStates){
-            newStateLabelMap.put(state, "q" + state);
+            newStateLabelMap.put(state, "q" + state); //NEED TO IMPROVE THIS
         }
 
         return new NFA(NEW_START_STATE, newStates, newAcceptingStates, dfa.getAlphabet(),newTransitionMap,newStateLabelMap);
