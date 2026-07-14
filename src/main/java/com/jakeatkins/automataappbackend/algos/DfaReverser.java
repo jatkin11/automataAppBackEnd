@@ -15,7 +15,7 @@ public class DfaReverser {
     public static NFA reverse(DFA dfa){
         Map<Integer,Map<Character,Set<Integer>>> newTransitionMap = new HashMap<>();
         Set<Integer> newStates = new HashSet<>(dfa.getStates());
-        Integer NEW_START_STATE = dfa.getStates().size(); //NEED TO FIX THIS ISSUE, NOT A SAFE WAY OF DOING IT
+        Integer NEW_START_STATE = UniqueStateGenerator.generate(dfa.getStates());
         newStates.add(NEW_START_STATE);
         Set<Integer> newAcceptingStates = Set.of(dfa.getStartState());
         
