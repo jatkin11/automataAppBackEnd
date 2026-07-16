@@ -11,6 +11,7 @@ import com.jakeatkins.automataappbackend.exceptions.InvalidRegexException;
 import com.jakeatkins.automataappbackend.exceptions.InvalidWordTestException;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
 import com.jakeatkins.automataappbackend.validators.RegexStringValidator;
+import com.jakeatkins.automataappbackend.validators.WordValidator;
 
 public class WordTester {
 
@@ -22,6 +23,10 @@ public static boolean testAutomata(Automata automata, String word){
 
     if(word == null){
         throw new InvalidWordTestException("Word cannot be null");
+    }
+
+    if(!WordValidator.validateWord(word)){
+        throw new InvalidWordTestException("Invalid word, must only contain letters or digits");
     }
 
     Map<Integer,Map<Character,Set<Integer>>> transitionMap = automata.getTransitionMap();
@@ -53,7 +58,7 @@ public static boolean testAutomata(Automata automata, String word){
     //need to add better validation
     public static boolean testRegexString(String regex, String word){
         if(regex == null){
-            throw new InvalidWordTestException("Regex cannot be null");
+            throw new InvalidRegexException("Regex cannot be null");
         }
 
         if(word == null){
@@ -62,6 +67,10 @@ public static boolean testAutomata(Automata automata, String word){
 
         if(!RegexStringValidator.validateRegexString(regex)){
             throw new InvalidRegexException("Regex is invalid");
+        }
+
+        if(!WordValidator.validateWord(word)){
+            throw new InvalidWordTestException("Invalid word, must only contain letters or digits");
         }
 
         RegexToken rt = new RegexTokeniser(regex).tokenise();
