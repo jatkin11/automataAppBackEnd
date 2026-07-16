@@ -1,5 +1,6 @@
 package com.jakeatkins.automataappbackend.algos;
 
+import com.jakeatkins.automataappbackend.exceptions.InvalidRegexException;
 import com.jakeatkins.automataappbackend.regex.RegexConcat;
 import com.jakeatkins.automataappbackend.regex.RegexEmptySet;
 import com.jakeatkins.automataappbackend.regex.RegexEpsilon;
@@ -7,6 +8,7 @@ import com.jakeatkins.automataappbackend.regex.RegexStarred;
 import com.jakeatkins.automataappbackend.regex.RegexSymbol;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
 import com.jakeatkins.automataappbackend.regex.RegexUnion;
+import com.jakeatkins.automataappbackend.validators.RegexStringValidator;
 
 public class RegexTokeniser {
     
@@ -16,29 +18,35 @@ public class RegexTokeniser {
     private int position = 0;
     private int symbolPosition = 1;
     
-    //NEED TO ADD VALIDATION
     public RegexTokeniser(String regexString){
         this.regexString = regexString;
     }
 
-    //NEED TO ADD VALIDATION
     public RegexToken tokenise(){
+        if(regexString == null){
+            throw new InvalidRegexException("Regex cannot be null");
+        }
+        if(!RegexStringValidator.validateRegexString(regexString)){
+            throw new InvalidRegexException("Regex String is invalid");
+        }
+      
         return unionise();
     }
 
-    //NEED TO ADD VALIDATION
     private RegexToken unionise(){
         RegexToken left = concatenate();
 
         while(hasRemaining() && currentChar()=='|'){
             consumeChar('|');
+            if(!hasRemaining()){
+                throw new InvalidRegexException("Regex Invalid: Missing character after'|'");
+            }
             RegexToken right = concatenate();
             left = new RegexUnion(left,right);
         }
         return left;
     }
 
-    //NEED TO ADD VALIDATION
     private RegexToken concatenate(){
         RegexToken left = star();
         while(hasRemaining() && isNewExpression(currentChar())){
@@ -48,7 +56,6 @@ public class RegexTokeniser {
         return left;
     }
 
-    //NEED TO ADD VALIDATION
     private RegexToken star(){
         RegexToken token = symbolise();
 
@@ -59,8 +66,11 @@ public class RegexTokeniser {
         return token;
     }
 
-    //NEED TO ADD VALIDATION
     private RegexToken symbolise(){
+        if(!hasRemaining()){
+            throw new InvalidRegexException("Regex Invalid: Missing character");
+        }
+        
         if(currentChar() == '('){
             consumeChar('(');
             RegexToken token = unionise();
@@ -83,26 +93,25 @@ public class RegexTokeniser {
         return new RegexSymbol(symbol,symbolPosition++);
     }
 
-    //NEED TO ADD VALIDATION
     private boolean hasRemaining(){
         return this.position < regexString.length();
     }
 
-    //NEED TO ADD VALIDATION
     private boolean isNewExpression(char c){
         return c=='(' || Character.isLetterOrDigit(c) || c== EPSILON || c == EMPTY_SET ;
     }
-
-    //NEED TO ADD VALIDATION
+ 
     private void consumeChar(char c){
         if(!hasRemaining() || currentChar()!=c ){
-            throw new IllegalArgumentException("invalid consumption");
+            throw new InvalidRegexException("Regex Invalid: Invalid consumption");
         }
         position++;
     }
 
-    //NEED TO ADD VALIDATION
     private char currentChar(){
+        if(!hasRemaining()){
+            throw new InvalidRegexException("Regex Invalid: Missing character");
+        }
         return regexString.charAt(position);
     }
 
