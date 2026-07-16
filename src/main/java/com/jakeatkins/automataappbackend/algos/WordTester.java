@@ -7,14 +7,21 @@ import java.util.Set;
 
 import com.jakeatkins.automataappbackend.automata.Automata;
 import com.jakeatkins.automataappbackend.automata.NFA;
+import com.jakeatkins.automataappbackend.exceptions.InvalidRegexException;
+import com.jakeatkins.automataappbackend.exceptions.InvalidWordTestException;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
+import com.jakeatkins.automataappbackend.validators.RegexStringValidator;
 
 public class WordTester {
 
 //need to add better validation
 public static boolean testAutomata(Automata automata, String word){
-    if (automata == null || word == null){
-        return false;
+    if (automata == null){
+        throw new InvalidWordTestException("Automata cannot be null");
+    }
+
+    if(word == null){
+        throw new InvalidWordTestException("Word cannot be null");
     }
 
     Map<Integer,Map<Character,Set<Integer>>> transitionMap = automata.getTransitionMap();
@@ -45,9 +52,18 @@ public static boolean testAutomata(Automata automata, String word){
 
     //need to add better validation
     public static boolean testRegexString(String regex, String word){
-        if(regex == null || word == null){
-            return false;
+        if(regex == null){
+            throw new InvalidWordTestException("Regex cannot be null");
         }
+
+        if(word == null){
+            throw new InvalidWordTestException("Word cannot be null");
+        }
+
+        if(!RegexStringValidator.validateRegexString(regex)){
+            throw new InvalidRegexException("Regex is invalid");
+        }
+
         RegexToken rt = new RegexTokeniser(regex).tokenise();
         NFA nfa = new RegexToNfaConverter(rt).convert();
         return testAutomata(nfa, word);
