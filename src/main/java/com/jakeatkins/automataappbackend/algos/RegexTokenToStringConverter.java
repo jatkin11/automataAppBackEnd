@@ -1,5 +1,6 @@
 package com.jakeatkins.automataappbackend.algos;
 
+import com.jakeatkins.automataappbackend.exceptions.InvalidRegexTokenException;
 import com.jakeatkins.automataappbackend.regex.RegexConcat;
 import com.jakeatkins.automataappbackend.regex.RegexEmptySet;
 import com.jakeatkins.automataappbackend.regex.RegexEpsilon;
@@ -14,6 +15,9 @@ public class RegexTokenToStringConverter {
     private static final char EMPTY_SET = '∅';
 
     public static String convert(RegexToken regex){
+        if(regex == null){
+            throw new InvalidRegexTokenException("RegexToken cannot be null");
+        }
 
         return switch (regex) {
             case RegexSymbol r-> String.valueOf(r.symbol());
