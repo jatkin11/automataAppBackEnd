@@ -89,7 +89,7 @@ public class AutomataToReactFlowGraphMapper {
     }
 
     private static String generateNodeId(Integer state){
-        return "q" + state;
+        return String.valueOf(state);
     }
 
     private static String generateEdgeId(Integer source, Integer target, String symbols){

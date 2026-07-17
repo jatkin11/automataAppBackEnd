@@ -101,7 +101,7 @@ public class ReactFlowGraphToAutomataMapper {
 
     //NEED TO ADD VALIDATION HERE
     private static Integer nodeIdToInt(String nodeId){
-        return Integer.valueOf(nodeId.substring(1));
+        return Integer.valueOf(nodeId);
     }
 
 
