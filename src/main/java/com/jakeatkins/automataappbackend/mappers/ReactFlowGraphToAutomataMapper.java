@@ -16,6 +16,8 @@ import com.jakeatkins.automataappbackend.dto.ReactFlowNode;
 
 public class ReactFlowGraphToAutomataMapper {
     
+    //NEED TO CENTRALISE THE SOURCE OF EPSILON
+    private static final char EPSILON = 'ε';
 
     //NEED TO ADD VALIDATION
     public static NFA reactFlowGraphToNFA(ReactFlowGraph graph){
@@ -33,7 +35,8 @@ public class ReactFlowGraphToAutomataMapper {
             Integer target = nodeIdToInt(edge.getTarget());
 
             for(Character symbol : splitSymbols){
-                alphabet.add(symbol);
+                if(symbol != EPSILON){
+                alphabet.add(symbol);}
                 transitionMap.computeIfAbsent(source, r-> new HashMap<>()).computeIfAbsent(symbol, r->new HashSet<>()).add(target);
             }
         }
