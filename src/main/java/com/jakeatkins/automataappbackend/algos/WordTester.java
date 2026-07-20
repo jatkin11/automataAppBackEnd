@@ -7,27 +7,15 @@ import java.util.Set;
 
 import com.jakeatkins.automataappbackend.automata.Automata;
 import com.jakeatkins.automataappbackend.automata.NFA;
-import com.jakeatkins.automataappbackend.exceptions.InvalidRegexException;
-import com.jakeatkins.automataappbackend.exceptions.InvalidWordTestException;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
-import com.jakeatkins.automataappbackend.validators.RegexStringValidator;
-import com.jakeatkins.automataappbackend.validators.WordValidator;
+import com.jakeatkins.automataappbackend.validators.*;
 
 public class WordTester {
 
-//need to add better validation
 public static boolean testAutomata(Automata automata, String word){
-    if (automata == null){
-        throw new InvalidWordTestException("Automata cannot be null");
-    }
 
-    if(word == null){
-        throw new InvalidWordTestException("Word cannot be null");
-    }
-
-    if(!WordValidator.validateWord(word)){
-        throw new InvalidWordTestException("Invalid word, must only contain letters or digits");
-    }
+    AutomataValidator.validate(automata);
+    WordValidator.validate(word);
 
     Map<Integer,Map<Character,Set<Integer>>> transitionMap = automata.getTransitionMap();
 
@@ -55,23 +43,9 @@ public static boolean testAutomata(Automata automata, String word){
     return false;
 }
 
-    //need to add better validation
     public static boolean testRegexString(String regex, String word){
-        if(regex == null){
-            throw new InvalidRegexException("Regex cannot be null");
-        }
-
-        if(word == null){
-            throw new InvalidWordTestException("Word cannot be null");
-        }
-
-        if(!RegexStringValidator.validateRegexString(regex)){
-            throw new InvalidRegexException("Regex is invalid");
-        }
-
-        if(!WordValidator.validateWord(word)){
-            throw new InvalidWordTestException("Invalid word, must only contain letters or digits");
-        }
+        RegexValidator.validate(regex);
+        WordValidator.validate(word);
 
         RegexToken rt = new RegexTokeniser(regex).tokenise();
         NFA nfa = new RegexToNfaConverter(rt).convert();

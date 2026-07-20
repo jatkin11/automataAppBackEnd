@@ -1,0 +1,81 @@
+package com.jakeatkins.automataappbackend.validators;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import com.jakeatkins.automataappbackend.exceptions.*;
+
+public class RegexValidator {
+ 
+    private static final char EPSILON = 'ε';
+    private static final char EMPTY_SET = '∅';
+    private static final char UNION = '|';
+    private static final char STAR = '*';
+    private static final char OPEN_BRACKET = '(';
+    private static final char CLOSED_BRACKET = ')';
+
+    private enum PreviousChar{
+        NONE,
+        VALIDCHAR,
+        OPEN_BRACKET,
+        CLOSED_BRACKET,
+        UNION,
+        STAR
+    }
+
+    public static void validate(String inputRegex){
+        if(inputRegex == null){
+            throw new InvalidRegexException("Regex cannot be null");
+        }
+        
+        String regex = inputRegex.strip();
+
+        if(regex.isBlank()){throw new InvalidRegexException("Regex cannot be blank");}
+
+        Deque<Character> stack = new ArrayDeque<>();
+        PreviousChar previousChar = PreviousChar.NONE;
+
+        char[] charArray = regex.toCharArray();
+ 
+        for(char c : charArray){
+
+            switch(c){
+                case EPSILON,EMPTY_SET -> {previousChar = PreviousChar.VALIDCHAR;}
+                case OPEN_BRACKET -> {
+                    stack.push(OPEN_BRACKET);
+                    previousChar = PreviousChar.OPEN_BRACKET;
+                }
+                case CLOSED_BRACKET -> {
+                    if(stack.isEmpty()){
+                    throw new InvalidRegexException("Invalid regex: incorrect bracket closure");
+                    }
+                    if(previousChar == PreviousChar.OPEN_BRACKET || previousChar == PreviousChar.UNION){
+                        throw new InvalidRegexException("Invalid regex: incorrect bracket closure");
+                    }
+                    stack.pop();
+                    previousChar = PreviousChar.CLOSED_BRACKET;
+                }
+                case UNION -> {
+                    if(previousChar == PreviousChar.NONE || previousChar == PreviousChar.OPEN_BRACKET || previousChar == PreviousChar.UNION){
+                    throw new InvalidRegexException("Invalid regex: incorrect union");
+                    }
+                    previousChar = PreviousChar.UNION;
+                }
+                case STAR -> {
+                    if(previousChar != PreviousChar.VALIDCHAR && previousChar != PreviousChar.CLOSED_BRACKET){
+                        throw new InvalidRegexException("Invalid regex: incorrect star");
+                    }
+                    previousChar = PreviousChar.STAR;
+                }
+                default -> {
+                    if(!Character.isLetterOrDigit(c)) // COULD AMEND THIS TO STRICTER A-Z, 0-9, currently accepts variations of letters
+                    {throw new InvalidRegexException("Invalid regex: symbol must be letter or digit");}
+                    previousChar = PreviousChar.VALIDCHAR;
+                }
+            }
+        }
+        if(previousChar == PreviousChar.UNION || previousChar == PreviousChar.OPEN_BRACKET){throw new InvalidRegexException("Invalid regex: invalid regex ending");}
+        if(!stack.isEmpty()){
+            throw new InvalidRegexException("Invalid regex: incorrect bracket closure");
+        }
+    }           
+}

@@ -15,6 +15,7 @@ import com.jakeatkins.automataappbackend.dto.Position;
 import com.jakeatkins.automataappbackend.dto.ReactFlowEdge;
 import com.jakeatkins.automataappbackend.dto.ReactFlowGraph;
 import com.jakeatkins.automataappbackend.dto.ReactFlowNode;
+import com.jakeatkins.automataappbackend.validators.*;
 
 
 public class AutomataToReactFlowGraphMapper {
@@ -24,6 +25,7 @@ public class AutomataToReactFlowGraphMapper {
     private record SourceTargetPairStates(Integer source, Integer target){};
 
     public static ReactFlowGraph fromAutomata(Automata automata){
+        AutomataValidator.validate(automata);
         return new ReactFlowGraph(getAutomataType(automata),createReactFlowEdges(automata), createReactFlowNodes(automata));
     }
 

@@ -10,8 +10,8 @@ public class ReactFlowGraphValidator {
     //NEED TO CENTRALISE EPSILON
     private static final char EPSILON = 'ε';
 
-    public static boolean validate(ReactFlowGraph rfg){
-        return validateGraph(rfg);
+    public static void validate(ReactFlowGraph rfg){
+        validateGraph(rfg);
     }
 
     public static boolean validateGraph(ReactFlowGraph rfg){

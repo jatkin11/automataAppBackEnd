@@ -12,7 +12,7 @@ import com.jakeatkins.automataappbackend.automata.NFA;
 import com.jakeatkins.automataappbackend.dto.ReactFlowEdge;
 import com.jakeatkins.automataappbackend.dto.ReactFlowGraph;
 import com.jakeatkins.automataappbackend.dto.ReactFlowNode;
-
+import com.jakeatkins.automataappbackend.validators.*;
 
 public class ReactFlowGraphToAutomataMapper {
     
@@ -21,6 +21,8 @@ public class ReactFlowGraphToAutomataMapper {
 
     //NEED TO ADD VALIDATION
     public static NFA reactFlowGraphToNFA(ReactFlowGraph graph){
+
+        ReactFlowGraphValidator.validate(graph);
 
         Set<Integer> states = new HashSet<>();
         Integer startState = null;

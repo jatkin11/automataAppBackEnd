@@ -13,6 +13,7 @@ import com.jakeatkins.automataappbackend.regex.RegexStarred;
 import com.jakeatkins.automataappbackend.regex.RegexSymbol;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
 import com.jakeatkins.automataappbackend.regex.RegexUnion;
+import com.jakeatkins.automataappbackend.validators.*;
 
 public class AutomataToRegexConverter {
     
@@ -23,6 +24,7 @@ public class AutomataToRegexConverter {
     private final Map<Integer,Map<Integer,RegexToken>> regexMap = new HashMap<>();
 
     public AutomataToRegexConverter(Automata automata){
+        AutomataValidator.validate(automata);
         this.automata = automata;
     }
 

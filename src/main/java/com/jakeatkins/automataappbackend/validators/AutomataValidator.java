@@ -11,14 +11,12 @@ public class AutomataValidator {
     //NEED TO CENTRALISE THE EPSILON AS CURRENTLY ACCROSS MULTIPLE CLASSES
     private static final char EPSILON = 'ε';
 
-    public static boolean validate(Automata automata){
-        boolean structure = validateStructure(automata);
-        boolean transitions = validateTransitions(automata);
-
-        return structure && transitions;
+    public static void validate(Automata automata){
+        validateStructure(automata);
+        validateTransitions(automata);
     }
 
-    public static boolean validateStructure(Automata automata){
+    public static void validateStructure(Automata automata){
         if(automata == null){
             throw new InvalidAutomataException("Automata cannot be null");
         }
@@ -71,10 +69,9 @@ public class AutomataValidator {
             throw new InvalidAutomataException("Missing states from state label map");
         }
 
-        return true;
     }
 
-    public static boolean validateTransitions(Automata automata){
+    public static void validateTransitions(Automata automata){
         for(Map.Entry<Integer,Map<Character,Set<Integer>>> transitions : automata.getTransitionMap().entrySet()){
             
             Integer source = transitions.getKey();
@@ -139,7 +136,7 @@ public class AutomataValidator {
 
             }
         }
-        return true;
+
     }
 
     public static boolean validateAlphabet(Set<Character> alphabet){

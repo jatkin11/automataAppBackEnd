@@ -8,7 +8,7 @@ import com.jakeatkins.automataappbackend.regex.RegexStarred;
 import com.jakeatkins.automataappbackend.regex.RegexSymbol;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
 import com.jakeatkins.automataappbackend.regex.RegexUnion;
-import com.jakeatkins.automataappbackend.validators.RegexStringValidator;
+import com.jakeatkins.automataappbackend.validators.RegexValidator;
 
 public class RegexTokeniser {
     
@@ -19,17 +19,11 @@ public class RegexTokeniser {
     private int symbolPosition = 1;
     
     public RegexTokeniser(String regexString){
+        RegexValidator.validate(regexString);
         this.regexString = regexString;
     }
 
     public RegexToken tokenise(){
-        if(regexString == null){
-            throw new InvalidRegexException("Regex cannot be null");
-        }
-        if(!RegexStringValidator.validateRegexString(regexString)){
-            throw new InvalidRegexException("Regex String is invalid");
-        }
-      
         return unionise();
     }
 

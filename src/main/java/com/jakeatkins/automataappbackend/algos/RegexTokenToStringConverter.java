@@ -19,6 +19,8 @@ public class RegexTokenToStringConverter {
             throw new InvalidRegexTokenException("RegexToken cannot be null");
         }
 
+        //NEED TO ADD A REGEXTOKEN VALIDATOR THAT THROWS ERROR IF FALSE
+
         return switch (regex) {
             case RegexSymbol r-> String.valueOf(r.symbol());
             case RegexEpsilon r -> String.valueOf(EPSILON);
