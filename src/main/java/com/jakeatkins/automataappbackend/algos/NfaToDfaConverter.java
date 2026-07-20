@@ -8,24 +8,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 import com.jakeatkins.automataappbackend.automata.DFA;
 import com.jakeatkins.automataappbackend.automata.NFA;
+import com.jakeatkins.automataappbackend.validators.*;
 
 
 public class NfaToDfaConverter {
-    
-    private static final char EPSILON = 'ε';
 
     public static DFA convert(NFA nfa){
-
+        AutomataValidator.validate(nfa);
         GlobalStateIdGenerator idGen = new GlobalStateIdGenerator();
 
         return subsetConstruction(nfa, idGen);
     }
 
     private static DFA subsetConstruction(NFA nfa, GlobalStateIdGenerator idGen){
-        Integer startState = idGen.next(); //internal state should be 0, but extenernal should be epsilon closure of NFA states
+        Integer startState = idGen.next(); 
         Set<Integer> states = new HashSet<>();
         Set<Integer> acceptingStates = new HashSet<>();
         

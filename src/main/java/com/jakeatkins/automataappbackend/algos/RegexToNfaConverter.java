@@ -7,15 +7,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.Objects;
 
 import com.jakeatkins.automataappbackend.automata.NFA;
-import com.jakeatkins.automataappbackend.regex.RegexConcat;
-import com.jakeatkins.automataappbackend.regex.RegexEmptySet;
-import com.jakeatkins.automataappbackend.regex.RegexEpsilon;
-import com.jakeatkins.automataappbackend.regex.RegexStarred;
-import com.jakeatkins.automataappbackend.regex.RegexSymbol;
-import com.jakeatkins.automataappbackend.regex.RegexToken;
-import com.jakeatkins.automataappbackend.regex.RegexUnion;
+import com.jakeatkins.automataappbackend.regex.*;
+
 
 public class RegexToNfaConverter {
     
@@ -27,7 +23,7 @@ public class RegexToNfaConverter {
     private final RegexToken regex;
     
     public RegexToNfaConverter(RegexToken regex){
-        this.regex = regex;
+        this.regex = Objects.requireNonNull(regex);
     }
 
     public NFA convert(){
@@ -57,7 +53,7 @@ public class RegexToNfaConverter {
         return new NFA(NEW_START_STATE, states, acceptingStates, alphabet, this.transitionMap, this.stateLabelMap);
     }
 
-    public CurrentState calculateCurrentState(RegexToken regex){
+    private CurrentState calculateCurrentState(RegexToken regex){
         
         if(regex instanceof RegexSymbol r){
             Integer position = r.position();

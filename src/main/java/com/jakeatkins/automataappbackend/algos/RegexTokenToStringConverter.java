@@ -1,25 +1,16 @@
 package com.jakeatkins.automataappbackend.algos;
 
 import com.jakeatkins.automataappbackend.exceptions.InvalidRegexTokenException;
-import com.jakeatkins.automataappbackend.regex.RegexConcat;
-import com.jakeatkins.automataappbackend.regex.RegexEmptySet;
-import com.jakeatkins.automataappbackend.regex.RegexEpsilon;
-import com.jakeatkins.automataappbackend.regex.RegexStarred;
-import com.jakeatkins.automataappbackend.regex.RegexSymbol;
-import com.jakeatkins.automataappbackend.regex.RegexToken;
-import com.jakeatkins.automataappbackend.regex.RegexUnion;
+import com.jakeatkins.automataappbackend.regex.*;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EMPTY_SET;
 
 public class RegexTokenToStringConverter {
     
-    private static final char EPSILON = 'ε';
-    private static final char EMPTY_SET = '∅';
-
     public static String convert(RegexToken regex){
         if(regex == null){
             throw new InvalidRegexTokenException("RegexToken cannot be null");
         }
-
-        //NEED TO ADD A REGEXTOKEN VALIDATOR THAT THROWS ERROR IF FALSE
 
         return switch (regex) {
             case RegexSymbol r-> String.valueOf(r.symbol());

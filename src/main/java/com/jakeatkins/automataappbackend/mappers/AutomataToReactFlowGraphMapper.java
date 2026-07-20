@@ -10,11 +10,7 @@ import java.util.stream.Collectors;
 
 import com.jakeatkins.automataappbackend.automata.Automata;
 import com.jakeatkins.automataappbackend.automata.NFA;
-import com.jakeatkins.automataappbackend.dto.NodeData;
-import com.jakeatkins.automataappbackend.dto.Position;
-import com.jakeatkins.automataappbackend.dto.ReactFlowEdge;
-import com.jakeatkins.automataappbackend.dto.ReactFlowGraph;
-import com.jakeatkins.automataappbackend.dto.ReactFlowNode;
+import com.jakeatkins.automataappbackend.dto.*;
 import com.jakeatkins.automataappbackend.validators.*;
 
 

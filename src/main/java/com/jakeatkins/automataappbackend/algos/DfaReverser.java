@@ -5,12 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.jakeatkins.automataappbackend.automata.DFA;
-import com.jakeatkins.automataappbackend.automata.NFA;
+import com.jakeatkins.automataappbackend.automata.*;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 
 public class DfaReverser {
-
-    public static final char EPSILON = 'ε';
 
     public static NFA reverse(DFA dfa){
         Map<Integer,Map<Character,Set<Integer>>> newTransitionMap = new HashMap<>();

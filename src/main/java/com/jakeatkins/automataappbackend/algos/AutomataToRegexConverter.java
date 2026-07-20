@@ -6,38 +6,35 @@ import java.util.Map;
 import java.util.Set;
 
 import com.jakeatkins.automataappbackend.automata.Automata;
-import com.jakeatkins.automataappbackend.regex.RegexConcat;
-import com.jakeatkins.automataappbackend.regex.RegexEmptySet;
-import com.jakeatkins.automataappbackend.regex.RegexEpsilon;
-import com.jakeatkins.automataappbackend.regex.RegexStarred;
-import com.jakeatkins.automataappbackend.regex.RegexSymbol;
-import com.jakeatkins.automataappbackend.regex.RegexToken;
-import com.jakeatkins.automataappbackend.regex.RegexUnion;
+import com.jakeatkins.automataappbackend.regex.*;
 import com.jakeatkins.automataappbackend.validators.*;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 
 public class AutomataToRegexConverter {
     
-    private static final char EPSILON = 'ε';
-    private static final int NEW_START_STATE = -1;
-    private static final int NEW_FINAL_STATE = -2;
+    private static final int unassignedRegexPosition = -1;
+    private final int newStartState;
+    private final int newFinalState;
     private final Automata automata;
     private final Map<Integer,Map<Integer,RegexToken>> regexMap = new HashMap<>();
 
     public AutomataToRegexConverter(Automata automata){
         AutomataValidator.validate(automata);
+        Set<Integer> currentStates = new HashSet<>(automata.getStates());
+        this.newStartState = UniqueStateGenerator.generate(currentStates);
+        currentStates.add(this.newStartState);
+        this.newFinalState = UniqueStateGenerator.generate(currentStates);
         this.automata = automata;
     }
 
-    //NEED TO ADD VALIDATION FOR THE AUTOMATA BEFORE CONVERTING
-    //NEED TO ADD ERROR HANDLING
-    //NEED TO MAKE THE NEW START STATE AND NEW FINAL STATE DYNAMIC, TO PREVENT ERROR IF A STATE OF THE AUTOMATA HAS THE SAME ID
     public RegexToken convert(){
         Set<Integer> rippableStates = new HashSet<>(this.automata.getStates());
         Set<Integer> allStates = new HashSet<>(rippableStates);
         
-        allStates.add(NEW_START_STATE);
-        allStates.add(NEW_FINAL_STATE);
-        buildSourceToTargetRegexMap();
+        allStates.add(newStartState);
+        allStates.add(newFinalState);
+        
+        buildSourceToTargetRegexMap(allStates);
 
         for(Integer stateToRip : rippableStates){
 
@@ -64,10 +61,10 @@ public class AutomataToRegexConverter {
 
 
         }
-        return regexMap.get(NEW_START_STATE).get(NEW_FINAL_STATE);
+        return regexMap.get(newStartState).get(newFinalState);
     }
 
-    public void ripState(int state){
+    private void ripState(int state){
         this.regexMap.remove(state);
 
         for(Map<Integer,RegexToken>innerMap: this.regexMap.values()){
@@ -76,12 +73,8 @@ public class AutomataToRegexConverter {
 
     }
 
-    public void buildSourceToTargetRegexMap(){
+    private void buildSourceToTargetRegexMap(Set<Integer> allStates){
         
-        Set<Integer> allStates = new HashSet<>(this.automata.getStates());
-        allStates.add(NEW_START_STATE);
-        allStates.add(NEW_FINAL_STATE);
-
         for(Integer source: allStates){
             for(Integer target: allStates){
                 addTransition(source, target, new RegexEmptySet());
@@ -89,10 +82,10 @@ public class AutomataToRegexConverter {
         }
 
         for(Integer acceptingState : this.automata.getAcceptingStates()){
-            addTransition(acceptingState,NEW_FINAL_STATE, new RegexEpsilon());
+            addTransition(acceptingState,this.newFinalState, new RegexEpsilon());
         }
 
-        addTransition(NEW_START_STATE, this.automata.getStartState(), new RegexEpsilon());
+        addTransition(this.newStartState, this.automata.getStartState(), new RegexEpsilon());
 
         for(Map.Entry<Integer,Map<Character,Set<Integer>>> sourceEntry : automata.getTransitionMap().entrySet()){
 
@@ -106,14 +99,14 @@ public class AutomataToRegexConverter {
                     if(symbol == EPSILON){
                         addTransition(source, target,new RegexEpsilon());
                     }else{
-                        addTransition(source, target, new RegexSymbol(symbol,0)); //NEED TO GET RID OF THIS MAGIC NUMBER
+                        addTransition(source, target, new RegexSymbol(symbol,unassignedRegexPosition)); 
                     }
                 }
             }
         }
     }
 
-    public void addTransition(int source, int target, RegexToken regex){
+    private void addTransition(int source, int target, RegexToken regex){
         RegexToken existingElseAddEmptySet = this.regexMap.computeIfAbsent(source, r-> new HashMap<>())
         .getOrDefault(target,new RegexEmptySet());
 
@@ -121,20 +114,20 @@ public class AutomataToRegexConverter {
         .put(target,union(existingElseAddEmptySet,regex));
     }
 
-    public RegexToken union(RegexToken left, RegexToken right){
+    private RegexToken union(RegexToken left, RegexToken right){
         if(left instanceof RegexEmptySet){
             return right;
         }
         if(right instanceof RegexEmptySet){
             return left;
         }
-        if(left.equals(right)){ //NEED TO OVERIDE EQUALS IN THE REGEXUNION FOR THIS TO WORK OR CHANGE REGEXTOKEN IMPLEMENTAIONS TO RECORDS, TBD
+        if(left.equals(right)){ 
             return left; 
         }
         return new RegexUnion(left,right);
     }
 
-    public RegexToken concat(RegexToken left, RegexToken right){
+    private RegexToken concat(RegexToken left, RegexToken right){
         if(left instanceof RegexEpsilon){
             return right;
         }   
@@ -150,7 +143,7 @@ public class AutomataToRegexConverter {
         return new RegexConcat(left,right);
     }
 
-    public RegexToken starred(RegexToken starred){
+    private RegexToken starred(RegexToken starred){
         if(starred instanceof RegexEmptySet){
             return new RegexEpsilon();
         }

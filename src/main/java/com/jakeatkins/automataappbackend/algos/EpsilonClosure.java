@@ -6,11 +6,10 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 
 
 public class EpsilonClosure {
-
-    public static final char EPSILON = 'ε';
 
     public static Set<Integer> epsilonClosure(Set<Integer> states, Map<Integer, Map<Character,Set<Integer>>> transitionMap){
         Set<Integer> closure = new HashSet<>();

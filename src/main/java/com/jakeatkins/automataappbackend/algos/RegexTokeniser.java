@@ -1,19 +1,13 @@
 package com.jakeatkins.automataappbackend.algos;
 
 import com.jakeatkins.automataappbackend.exceptions.InvalidRegexException;
-import com.jakeatkins.automataappbackend.regex.RegexConcat;
-import com.jakeatkins.automataappbackend.regex.RegexEmptySet;
-import com.jakeatkins.automataappbackend.regex.RegexEpsilon;
-import com.jakeatkins.automataappbackend.regex.RegexStarred;
-import com.jakeatkins.automataappbackend.regex.RegexSymbol;
-import com.jakeatkins.automataappbackend.regex.RegexToken;
-import com.jakeatkins.automataappbackend.regex.RegexUnion;
+import com.jakeatkins.automataappbackend.regex.*;
 import com.jakeatkins.automataappbackend.validators.RegexValidator;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EMPTY_SET;
 
 public class RegexTokeniser {
     
-    private final char EPSILON = 'ε';
-    private final char EMPTY_SET = '∅';
     private final String regexString;
     private int position = 0;
     private int symbolPosition = 1;
