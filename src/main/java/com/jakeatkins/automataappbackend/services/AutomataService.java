@@ -65,8 +65,8 @@ public class AutomataService {
 
     public ReactFlowGraph minimiseDfa(ReactFlowGraph graph) {
         ReactFlowGraphValidator.validate(graph);
-        DFA dfa = ReactFlowGraphToAutomataMapper.reactFlowGraphToDfa(graph);
-        DFA minimisedDFA = DfaMinimiser.minimise(dfa);
+        NFA nfa = ReactFlowGraphToAutomataMapper.reactFlowGraphToNFA(graph);
+        DFA minimisedDFA = DfaMinimiser.minimise(nfa);
         return AutomataToReactFlowGraphMapper.fromAutomata(minimisedDFA);
     }
  }

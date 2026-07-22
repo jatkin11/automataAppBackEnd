@@ -12,7 +12,10 @@ public class GlobalExceptionHandler {
                         InvalidRegexException.class,
                         InvalidRegexTokenException.class,
                         InvalidWordTestException.class,
-                        InvalidWordException.class})
+                        InvalidWordException.class,
+                        InvalidAutomataWordTestException.class,
+                        InvalidRegexStringException.class,
+                        InvalidRegexWordTestException.class})
     public ResponseEntity<ApiException> badRequest(RuntimeException e){
         ApiException apiException = new ApiException("Bad Request", e.getMessage(), HttpStatus.BAD_REQUEST.value(), Instant.now());
 

@@ -6,12 +6,13 @@ import com.jakeatkins.automataappbackend.validators.*;
 
 public class DfaMinimiser {
     
-    public static DFA minimise(DFA dfa){
-      AutomataValidator.validate(dfa);
-      return brozowskiAlgo(dfa);
+    public static DFA minimise(NFA nfa){
+      AutomataValidator.validate(nfa);
+      DFA dfa = NfaToDfaConverter.convert(nfa);
+      return brzozowskiAlgo(dfa);
     }
 
-    public static DFA brozowskiAlgo(DFA dfa){
+    private static DFA brzozowskiAlgo(DFA dfa){
       NFA nfa1 = DfaReverser.reverse(dfa);
       DFA dfa1 = NfaToDfaConverter.convert(nfa1);
       NFA nfa2 = DfaReverser.reverse(dfa1);
