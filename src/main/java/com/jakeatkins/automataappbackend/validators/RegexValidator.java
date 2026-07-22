@@ -3,16 +3,15 @@ package com.jakeatkins.automataappbackend.validators;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import com.jakeatkins.automataappbackend.exceptions.*;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EMPTY_SET;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.OPEN_BRACKET;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.CLOSED_BRACKET;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.UNION;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.STAR;
 
 public class RegexValidator {
  
-    private static final char EPSILON = 'ε';
-    private static final char EMPTY_SET = '∅';
-    private static final char UNION = '|';
-    private static final char STAR = '*';
-    private static final char OPEN_BRACKET = '(';
-    private static final char CLOSED_BRACKET = ')';
-
     private enum PreviousChar{
         NONE,
         VALIDCHAR,

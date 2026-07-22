@@ -2,10 +2,12 @@ package com.jakeatkins.automataappbackend.algos;
 
 import com.jakeatkins.automataappbackend.automata.DFA;
 import com.jakeatkins.automataappbackend.automata.NFA;
+import com.jakeatkins.automataappbackend.validators.*;
 
 public class DfaMinimiser {
     
     public static DFA minimise(DFA dfa){
+      AutomataValidator.validate(dfa);
       return brozowskiAlgo(dfa);
     }
 

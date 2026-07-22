@@ -2,6 +2,7 @@ package com.jakeatkins.automataappbackend.algos;
 
 import com.jakeatkins.automataappbackend.exceptions.InvalidRegexTokenException;
 import com.jakeatkins.automataappbackend.regex.*;
+import com.jakeatkins.automataappbackend.exceptions.*;
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EMPTY_SET;
 
@@ -19,7 +20,7 @@ public class RegexTokenToStringConverter {
             case RegexStarred r-> "(" + convert(r.starredRegex()) + ")*";
             case RegexConcat r-> "(" + convert(r.left()) + convert(r.right()) + ")";
             case RegexUnion r-> "(" + convert(r.left()) + "|" + convert(r.right()) + ")";
-            default -> throw new IllegalArgumentException("Invalid regex");};
+            default -> throw new InvalidRegexException("Invalid regexToken tree");};
     }
 }
 

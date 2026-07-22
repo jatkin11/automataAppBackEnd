@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.Set;
 
 import com.jakeatkins.automataappbackend.automata.*;
+import com.jakeatkins.automataappbackend.validators.*;
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 
 public class DfaReverser {
 
     public static NFA reverse(DFA dfa){
+        AutomataValidator.validate(dfa);
         Map<Integer,Map<Character,Set<Integer>>> newTransitionMap = new HashMap<>();
         Set<Integer> newStates = new HashSet<>(dfa.getStates());
         Integer NEW_START_STATE = UniqueStateGenerator.generate(newStates);

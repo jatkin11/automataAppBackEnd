@@ -5,12 +5,10 @@ import java.util.Map;
 
 import com.jakeatkins.automataappbackend.automata.*;
 import com.jakeatkins.automataappbackend.exceptions.InvalidAutomataException;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 
 public class AutomataValidator {
     
-    //NEED TO CENTRALISE THE EPSILON AS CURRENTLY ACCROSS MULTIPLE CLASSES
-    private static final char EPSILON = 'ε';
-
     public static void validate(Automata automata){
         validateStructure(automata);
         validateTransitions(automata);
