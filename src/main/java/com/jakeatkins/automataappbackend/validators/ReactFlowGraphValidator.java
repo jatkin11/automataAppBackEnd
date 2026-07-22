@@ -4,12 +4,10 @@ import com.jakeatkins.automataappbackend.dto.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.jakeatkins.automataappbackend.exceptions.*;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 
 public class ReactFlowGraphValidator {
     
-    //NEED TO CENTRALISE EPSILON
-    private static final char EPSILON = 'ε';
-
     public static void validate(ReactFlowGraph rfg){
         validateGraph(rfg);
     }

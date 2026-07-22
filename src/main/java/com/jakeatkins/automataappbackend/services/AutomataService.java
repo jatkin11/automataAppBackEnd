@@ -2,22 +2,11 @@ package com.jakeatkins.automataappbackend.services;
 
 import org.springframework.stereotype.Service;
 
-import com.jakeatkins.automataappbackend.algos.AutomataToRegexConverter;
-import com.jakeatkins.automataappbackend.algos.DfaMinimiser;
-import com.jakeatkins.automataappbackend.algos.NfaToDfaConverter;
-import com.jakeatkins.automataappbackend.algos.RegexToNfaConverter;
-import com.jakeatkins.automataappbackend.algos.RegexTokenToStringConverter;
-import com.jakeatkins.automataappbackend.algos.RegexTokeniser;
-import com.jakeatkins.automataappbackend.algos.WordTester;
+import com.jakeatkins.automataappbackend.algos.*;
 import com.jakeatkins.automataappbackend.automata.DFA;
 import com.jakeatkins.automataappbackend.automata.NFA;
-import com.jakeatkins.automataappbackend.dto.AutomataWordTest;
-import com.jakeatkins.automataappbackend.dto.ReactFlowGraph;
-import com.jakeatkins.automataappbackend.dto.RegexString;
-import com.jakeatkins.automataappbackend.dto.RegexWordTest;
-import com.jakeatkins.automataappbackend.dto.WordTestResponse;
-import com.jakeatkins.automataappbackend.mappers.AutomataToReactFlowGraphMapper;
-import com.jakeatkins.automataappbackend.mappers.ReactFlowGraphToAutomataMapper;
+import com.jakeatkins.automataappbackend.dto.*;
+import com.jakeatkins.automataappbackend.mappers.*;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
 import com.jakeatkins.automataappbackend.validators.*;
 
