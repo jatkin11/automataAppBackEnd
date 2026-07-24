@@ -7,11 +7,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
+import com.jakeatkins.automataappbackend.exceptions.*;
 
 
 public class EpsilonClosure {
 
     public static Set<Integer> epsilonClosure(Set<Integer> states, Map<Integer, Map<Character,Set<Integer>>> transitionMap){
+        
+        if(states== null){
+            throw new InvalidAutomataException("States for Epsilon closure cannot be null");
+        }
+
+        if(transitionMap == null){
+            throw new InvalidAutomataException("Transition map for Epsilon closure cannot be null");
+        }
+        
         Set<Integer> closure = new HashSet<>();
 
         for(Integer i: states){
@@ -22,7 +32,7 @@ public class EpsilonClosure {
 
     }
 
-    public static Set<Integer> epsilonClosurePerState(Integer state, Map<Integer,Map<Character,Set<Integer>>> transitionMap){
+    private static Set<Integer> epsilonClosurePerState(Integer state, Map<Integer,Map<Character,Set<Integer>>> transitionMap){
         Set<Integer> closurePerState = new HashSet<>();
         Deque<Integer> stack = new ArrayDeque<>();
 

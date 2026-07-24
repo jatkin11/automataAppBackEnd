@@ -21,12 +21,13 @@ public class RegexValidator {
         STAR
     }
 
-    public static void validate(String inputRegex){
+    public static String validate(String inputRegex){
         if(inputRegex == null){
             throw new InvalidRegexException("Regex cannot be null");
         }
         
-        String regex = inputRegex.strip();
+
+        String regex = inputRegex.replaceAll("\\s+","");
 
         if(regex.isBlank()){throw new InvalidRegexException("Regex cannot be blank");}
 
@@ -66,7 +67,7 @@ public class RegexValidator {
                     previousChar = PreviousChar.STAR;
                 }
                 default -> {
-                    if(!Character.isLetterOrDigit(c)) // COULD AMEND THIS TO STRICTER A-Z, 0-9, currently accepts variations of letters
+                    if(!String.valueOf(c).matches("^[A-Za-z0-9]$"))
                     {throw new InvalidRegexException("Invalid regex: symbol must be letter or digit");}
                     previousChar = PreviousChar.VALIDCHAR;
                 }
@@ -76,5 +77,6 @@ public class RegexValidator {
         if(!stack.isEmpty()){
             throw new InvalidRegexException("Invalid regex: incorrect bracket closure");
         }
+        return regex;
     }           
 }

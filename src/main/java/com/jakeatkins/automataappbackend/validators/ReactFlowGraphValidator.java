@@ -12,7 +12,7 @@ public class ReactFlowGraphValidator {
         validateGraph(rfg);
     }
 
-    public static boolean validateGraph(ReactFlowGraph rfg){
+    private static void validateGraph(ReactFlowGraph rfg){
         if(rfg == null){
             throw new InvalidReactFlowGraphException("React Flow Graph cannot be null");
         }
@@ -31,12 +31,13 @@ public class ReactFlowGraphValidator {
 
         Set<Integer> validatedNodeIds = validateNodes(rfg.getNodes());
 
-        return validateEdges(rfg.getEdges(),validatedNodeIds) && checkForIsolatedNodes(rfg);
+        validateEdges(rfg.getEdges(),validatedNodeIds);
+        checkForIsolatedNodes(rfg);
 
     }
 
 
-    public static Set<Integer> validateNodes(List<ReactFlowNode> nodes){
+    private static Set<Integer> validateNodes(List<ReactFlowNode> nodes){
         Set<Integer> nodeIds = new HashSet<>();
         Integer startingStateCount = 0;
 
@@ -60,7 +61,7 @@ public class ReactFlowGraphValidator {
                 throw new InvalidReactFlowGraphException("Node: " + node.getId() + "label is blank");
             }
 
-            Integer id = Integer.parseInt(node.getId());
+            Integer id = getIdInt(node.getId());
             
             if(nodeIds.contains(id)){
                 throw new InvalidReactFlowGraphException("React Flow Graph cannot contain duplicates nodes");
@@ -77,7 +78,7 @@ public class ReactFlowGraphValidator {
         return nodeIds;
     }
 
-    public static boolean validateEdges(List<ReactFlowEdge> edges, Set<Integer>validatedNodes){
+    private static void validateEdges(List<ReactFlowEdge> edges, Set<Integer>validatedNodes){
         if(edges == null){
                 throw new InvalidReactFlowGraphException("React Flow Graph edges cannot be null");
         }
@@ -96,7 +97,7 @@ public class ReactFlowGraphValidator {
                 throw new InvalidReactFlowGraphException("Edge ID cannot be blank");
             }
             if(edgeIds.contains(edge.getId())){
-                throw new InvalidReactFlowGraphException("React Flow Graph cannot contain duplicates nodes");
+                throw new InvalidReactFlowGraphException("React Flow Graph cannot contain duplicate edges");
             }
             if(edge.getSource()== null){
                 throw new InvalidReactFlowGraphException("Source ID cannot be null");
@@ -122,26 +123,27 @@ public class ReactFlowGraphValidator {
             edgeLabels.add(edge.getLabel());
             edgeIds.add(edge.getId());
         }
-        return validateEdgeLabels(edgeLabels);
+        validateEdgeLabels(edgeLabels);
     }
 
-    public static boolean validateEdgeLabels(List<String> labels){
+    private static void validateEdgeLabels(List<String> labels){
         if(labels == null){
                 throw new InvalidReactFlowGraphException("Labels cannot be null");
         }
         for(String label: labels){
-            if(!validateEdgeLabelString(label)){
-                throw new InvalidReactFlowGraphException("Invalid Label found");
-            }
+            validateEdgeLabelString(label);
         }
-        return true;
+        
+
     }
 
-    public static boolean validateEdgeLabelString(String label){
+    private static void validateEdgeLabelString(String label){
         if(label == null){
                 throw new InvalidReactFlowGraphException("edge label cannot be null");
         }
-        label = label.strip();
+
+        label = label.replaceAll("\\s+","");
+
         if(label.isBlank()){
             throw new InvalidReactFlowGraphException("edge label cannot be blank");
         }
@@ -162,11 +164,10 @@ public class ReactFlowGraphValidator {
             if(c == EPSILON){
                 continue;
             }
-            if(!Character.isLetterOrDigit(c)){
+            if(!String.valueOf(c).matches("^[A-Za-z0-9]$")){
                 throw new InvalidReactFlowGraphException("Invalid label: invalid symbol");
             }  
         }
-        return true;
     }
 
     public static Integer getIdInt(String id){
@@ -181,14 +182,14 @@ public class ReactFlowGraphValidator {
             }
             return idInt;
         }catch(NumberFormatException e){
-            throw new InvalidReactFlowGraphException("Invalid Node ID: " + e);
+            throw new InvalidReactFlowGraphException("Invalid Node ID: " + id);
         }
     }
 
-    public static boolean checkForIsolatedNodes(ReactFlowGraph rfg){
+    private static void checkForIsolatedNodes(ReactFlowGraph rfg){
         Set<Integer> nodes = rfg.getNodes().stream().map(r->getIdInt(r.getId())).collect(Collectors.toSet());
         if(nodes.size()==1){
-            return true;
+            return;
         }
         Set<Integer> sourceNodes = rfg.getEdges().stream().map(r->getIdInt(r.getSource())).collect(Collectors.toSet());
         Set<Integer> targetNodes = rfg.getEdges().stream().map(r->getIdInt(r.getTarget())).collect(Collectors.toSet());
@@ -198,9 +199,6 @@ public class ReactFlowGraphValidator {
                 throw new InvalidReactFlowGraphException("Invalid React Flow Graph: cannot contain isolated node: " + node);
             }
         }
-
-        return true;
     }
     
-
 }

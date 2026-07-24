@@ -14,7 +14,7 @@ public class AutomataValidator {
         validateTransitions(automata);
     }
 
-    public static void validateStructure(Automata automata){
+    private static void validateStructure(Automata automata){
         if(automata == null){
             throw new InvalidAutomataException("Automata cannot be null");
         }
@@ -69,7 +69,7 @@ public class AutomataValidator {
 
     }
 
-    public static void validateTransitions(Automata automata){
+    private static void validateTransitions(Automata automata){
         for(Map.Entry<Integer,Map<Character,Set<Integer>>> transitions : automata.getTransitionMap().entrySet()){
             
             Integer source = transitions.getKey();
@@ -137,7 +137,7 @@ public class AutomataValidator {
 
     }
 
-    public static boolean validateAlphabet(Set<Character> alphabet){
+    private static boolean validateAlphabet(Set<Character> alphabet){
         for(Character c: alphabet){
             if(c == null || !validateSymbol(c)){
                 return false;
@@ -146,9 +146,8 @@ public class AutomataValidator {
         return true;
     }
 
-    // NEED TO UPDATE THIS TO ONLY INCLUDE A-Z, a-z, 0-9 as currently accepts special letters
-    public static boolean validateSymbol(char c){
-            return Character.isLetterOrDigit(c);
+    private static boolean validateSymbol(char c){
+            return String.valueOf(c).matches("^[A-Za-z0-9]$");
     }
 
 }

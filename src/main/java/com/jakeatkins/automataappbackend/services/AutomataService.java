@@ -22,7 +22,6 @@ public class AutomataService {
 
     public ReactFlowGraph convertToNfa(RegexString regexInput){
         RegexStringValidator.validate(regexInput);
-        RegexValidator.validate(regexInput.regex());
         RegexToken regex = new RegexTokeniser(regexInput.regex()).tokenise();
         NFA nfa = new RegexToNfaConverter(regex).convert();
         return AutomataToReactFlowGraphMapper.fromAutomata(nfa);
@@ -40,7 +39,6 @@ public class AutomataService {
 
     public WordTestResponse testWordOnRegexString(RegexWordTest rwt){
         RegexWordTestValidator.validate(rwt);
-        RegexValidator.validate(rwt.regex());
         WordValidator.validate(rwt.word());
         return new WordTestResponse(WordTester.testRegexString(rwt.regex(), rwt.word()));
     }

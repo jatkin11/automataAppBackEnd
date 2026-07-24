@@ -7,15 +7,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.Objects;
 
 import com.jakeatkins.automataappbackend.automata.NFA;
+import com.jakeatkins.automataappbackend.exceptions.InvalidRegexTokenException;
 import com.jakeatkins.automataappbackend.regex.*;
+import com.jakeatkins.automataappbackend.validators.*;
 
 
 public class RegexToNfaConverter {
     
-    public record CurrentState(boolean nullType, Set<Integer> firstPositions, Set<Integer> lastPositions){};
+    private record CurrentState(boolean nullType, Set<Integer> firstPositions, Set<Integer> lastPositions){};
     private final Map<Integer,Map<Character, Set<Integer>>> transitionMap = new HashMap<>();
     private final Map<Integer,Character> symbolPositionMap = new HashMap<>();
     private final static int NEW_START_STATE = 0;
@@ -23,7 +24,10 @@ public class RegexToNfaConverter {
     private final RegexToken regex;
     
     public RegexToNfaConverter(RegexToken regex){
-        this.regex = Objects.requireNonNull(regex);
+        if(regex == null){
+            throw new InvalidRegexTokenException("Regex token cannot be null");
+        }
+        this.regex = regex;
     }
 
     public NFA convert(){
@@ -50,13 +54,24 @@ public class RegexToNfaConverter {
 
         generateStateLabelMap(states);
 
-        return new NFA(NEW_START_STATE, states, acceptingStates, alphabet, this.transitionMap, this.stateLabelMap);
+        NFA nfa = new NFA(NEW_START_STATE, states, acceptingStates, alphabet, this.transitionMap, this.stateLabelMap);
+        AutomataValidator.validate(nfa);
+        return nfa;       
     }
 
     private CurrentState calculateCurrentState(RegexToken regex){
-        
+        if(regex == null){
+            throw new InvalidRegexTokenException("Regex token tree cannot contain a null token");
+        }
+
         if(regex instanceof RegexSymbol r){
             Integer position = r.position();
+            if(position == NEW_START_STATE || position < 1){
+                throw new InvalidRegexTokenException("Invalid Regex Tree: Invalid Position");
+            }
+            if(symbolPositionMap.containsKey(position)){
+                throw new InvalidRegexTokenException("Invalid Regex Tree: duplicated positions found for symbol");
+            }
             symbolPositionMap.put(position, r.symbol());
             return new CurrentState(false,Set.of(position),Set.of(position));
         }
@@ -130,7 +145,7 @@ public class RegexToNfaConverter {
 
         }
 
-        throw new IllegalArgumentException("Invalid regex");
+        throw new InvalidRegexTokenException("Invalid regex token tree");
     }
 
     private void addTransition(Integer from, Character symbol, Integer to){

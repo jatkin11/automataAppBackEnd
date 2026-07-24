@@ -25,7 +25,7 @@ public class AutomataToReactFlowGraphMapper {
         return new ReactFlowGraph(getAutomataType(automata),createReactFlowEdges(automata), createReactFlowNodes(automata));
     }
 
-    public static List<ReactFlowEdge> createReactFlowEdges(Automata automata){
+    private static List<ReactFlowEdge> createReactFlowEdges(Automata automata){
         List<ReactFlowEdge> edges = new ArrayList<>();
         Map<SourceTargetPairStates,Set<Character>> groupedLabelsPerSourceTargetMap = new HashMap<>();    
         
@@ -71,12 +71,12 @@ public class AutomataToReactFlowGraphMapper {
         return edges;
     }
 
-    public static List<ReactFlowNode> createReactFlowNodes(Automata automata){
+    private static List<ReactFlowNode> createReactFlowNodes(Automata automata){
         return automata.getStates()
         .stream().sorted()
         .map(r -> new ReactFlowNode(
             generateNodeId(r),
-            new Position(100,100),
+            new Position(100*r,100*r),
             new NodeData(
                 automata.getLabel(r),
                 automata.getStartState().equals(r),

@@ -1,10 +1,15 @@
 package com.jakeatkins.automataappbackend.algos;
 
-import com.jakeatkins.automataappbackend.exceptions.InvalidRegexException;
+import com.jakeatkins.automataappbackend.exceptions.*;
 import com.jakeatkins.automataappbackend.regex.*;
 import com.jakeatkins.automataappbackend.validators.RegexValidator;
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EMPTY_SET;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.OPEN_BRACKET;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.CLOSED_BRACKET;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.UNION;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.STAR;
+
 
 public class RegexTokeniser {
     
@@ -13,19 +18,26 @@ public class RegexTokeniser {
     private int symbolPosition = 1;
     
     public RegexTokeniser(String regexString){
-        RegexValidator.validate(regexString);
-        this.regexString = regexString;
+        String validatedRegex = RegexValidator.validate(regexString);
+        this.regexString = validatedRegex;
     }
 
     public RegexToken tokenise(){
-        return unionise();
+        RegexToken token = unionise();
+
+        if(hasRemaining()){
+            throw new InvalidRegexException("Regex Invalid: Remaining symbols in regex string");
+        }
+
+        return token;
+
     }
 
     private RegexToken unionise(){
         RegexToken left = concatenate();
 
-        while(hasRemaining() && currentChar()=='|'){
-            consumeChar('|');
+        while(hasRemaining() && currentChar()== UNION){
+            consumeChar(UNION);
             if(!hasRemaining()){
                 throw new InvalidRegexException("Regex Invalid: Missing character after'|'");
             }
@@ -47,8 +59,8 @@ public class RegexTokeniser {
     private RegexToken star(){
         RegexToken token = symbolise();
 
-        while(hasRemaining() && currentChar()=='*'){
-            consumeChar('*');
+        while(hasRemaining() && currentChar()== STAR){
+            consumeChar(STAR);
             token = new RegexStarred(token);
         }
         return token;
@@ -59,11 +71,16 @@ public class RegexTokeniser {
             throw new InvalidRegexException("Regex Invalid: Missing character");
         }
         
-        if(currentChar() == '('){
-            consumeChar('(');
+        if(currentChar() == OPEN_BRACKET){
+            consumeChar(OPEN_BRACKET);
             RegexToken token = unionise();
-            consumeChar(')');
-            return token;
+
+            if(currentChar() != CLOSED_BRACKET){
+                throw new InvalidRegexException("Regex Invalid: Missing Closing Bracket");
+            }
+
+            consumeChar(CLOSED_BRACKET);
+            return token;  
         }
 
         char symbol = currentChar();
@@ -77,8 +94,13 @@ public class RegexTokeniser {
             consumeChar(symbol);
             return new RegexEmptySet();
         }
-        consumeChar(symbol);
-        return new RegexSymbol(symbol,symbolPosition++);
+        if(String.valueOf(symbol).matches("^[A-Za-z0-9]$")){
+            consumeChar(symbol);        
+            
+            return new RegexSymbol(symbol,symbolPosition++);
+        }
+
+        throw new InvalidRegexException("Regex invalid: Invalid Char: " + symbol);
     }
 
     private boolean hasRemaining(){
@@ -86,7 +108,7 @@ public class RegexTokeniser {
     }
 
     private boolean isNewExpression(char c){
-        return c=='(' || Character.isLetterOrDigit(c) || c== EPSILON || c == EMPTY_SET ;
+        return c==OPEN_BRACKET || String.valueOf(c).matches("^[A-Za-z0-9]$") || c== EPSILON || c == EMPTY_SET ;
     }
  
     private void consumeChar(char c){

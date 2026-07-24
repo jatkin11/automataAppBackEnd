@@ -1,22 +1,20 @@
 package com.jakeatkins.automataappbackend.mappers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
 
 import com.jakeatkins.automataappbackend.automata.NFA;
 import com.jakeatkins.automataappbackend.dto.*;
 import com.jakeatkins.automataappbackend.validators.*;
+import com.jakeatkins.automataappbackend.exceptions.*;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 
 public class ReactFlowGraphToAutomataMapper {
     
-    //NEED TO CENTRALISE THE SOURCE OF EPSILON
-    private static final char EPSILON = 'ε';
-
-    //NEED TO ADD VALIDATION
     public static NFA reactFlowGraphToNFA(ReactFlowGraph graph){
 
         ReactFlowGraphValidator.validate(graph);
@@ -49,7 +47,7 @@ public class ReactFlowGraphToAutomataMapper {
                 acceptingStates.add(state);
             }
 
-            if(node.getData().isStartingState()){ //NEEDS VALIDATION TO ONLY HAVE ONE START STATE
+            if(node.getData().isStartingState()){ 
                 startState = state;
             }
             stateLabelMap.put(state,node.getData().getLabel());
@@ -58,18 +56,32 @@ public class ReactFlowGraphToAutomataMapper {
         return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
     }
 
-    //NEED TO ADD VALIDATION HERE
     private static Integer nodeIdToInt(String nodeId){
-        return Integer.valueOf(nodeId);
+        if(nodeId == null){
+            throw new InvalidReactFlowGraphException("Invalid React Flow Graph: Node id cannot be null");
+        }
+        try{
+            return Integer.valueOf(nodeId);
+        }catch(NumberFormatException e){
+            throw new InvalidReactFlowGraphException("Invalid React Flow graph: Node id must be an int");
+        }
     }
 
-    private static List<Character> reactFlowLabelToCharList(String label){ //NEED TO ADD VALIDATION HERE
-        List<Character> charList = new ArrayList<>();
-        String[] splitLabel = label.split(",");
-        
-        for(String x: splitLabel){
-            charList.add(x.trim().charAt(0));
+    private static List<Character> reactFlowLabelToCharList(String label){
+        if(label == null){
+            throw new InvalidReactFlowGraphException("Invalid React Flow graph: label cannot be null");
         }
-        return charList; 
+        if(label.isBlank()){
+            throw new InvalidReactFlowGraphException("Invalid React Flow graph: label cannot be blank");
+        }
+        return Arrays.stream(label.split(",")).map(String::strip).map(r-> {
+            if(r.length() != 1){
+            throw new InvalidReactFlowGraphException("Invalid React Flow graph: label must only contain single symbols separated by commas");
+            }
+            if(!r.matches("^[A-Za-z0-9ε]$")){
+            throw new InvalidReactFlowGraphException("Invalid React Flow graph: label must only contain symobsl A-Z,a-z,0-9, or ε"); 
+            }
+            return r.charAt(0);}
+        ).toList();
     } 
 }

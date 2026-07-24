@@ -10,7 +10,7 @@ public class WordValidator {
         }
                 
         if(!word.matches("[a-zA-Z0-9]*")){
-            throw new InvalidWordException("Invalide word: must be A-Z, a-z, 0-9");
+            throw new InvalidWordException("Invalid word: must be A-Z, a-z, 0-9");
         }
     }
 }
