@@ -60,6 +60,45 @@ public class TestAutomataCreator {
 
     }
 
+    public static NFA nfaOfdfaSingleAReversed(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(1,Map.of('a', Set.of(0)));
+        transitionMap.put(2,Map.of('ε',Set.of(1)));
+        Integer startState = 2;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(0);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"q2");
+
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+
+
+    }
+
+    public static DFA dfaSameStartAndAccepting(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(0)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(0);
+        Set<Integer> states = Set.of(0);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0");
+        return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+    }
+
+
+    public static NFA nfaOfDfaSameStartAndAcceptingReversed(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(0)));
+        transitionMap.put(1,Map.of('ε',Set.of(0)));
+        Integer startState = 1;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(0);
+        Set<Integer> states = Set.of(0,1);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1");
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+    }
+
     public static NFA nfaWithStarredA(){
        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
         transitionMap.put(0,Map.of('a', Set.of(1)));
@@ -125,11 +164,32 @@ public class TestAutomataCreator {
     }
 
 
-    // public static NFA nfaEndingWithAB(){
+    public static DFA dfaWithMultipleAcceptingStates(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1)));
+        transitionMap.put(1,Map.of('a', Set.of(2)));
+        transitionMap.put(2,Map.of('a', Set.of(2)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(1,2);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"q2");
+        return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+    }
 
 
-    // }
-
+    public static NFA nfaOfdfaWithMultipleAcceptingStatesReversed(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(1,Map.of('a', Set.of(0)));
+        transitionMap.put(2,Map.of('a', Set.of(1,2)));
+        transitionMap.put(3,Map.of('ε', Set.of(1,2)));
+        Integer startState = 3;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(0);
+        Set<Integer> states = Set.of(0,1,2,3);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"q2",   3,"q3");
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+    }
 
     public static NFA nfaWithEpsilonOnly(){
         Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
