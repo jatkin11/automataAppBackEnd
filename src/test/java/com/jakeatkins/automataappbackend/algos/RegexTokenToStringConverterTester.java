@@ -18,22 +18,22 @@ public class RegexTokenToStringConverterTester {
     
     @Test
     void convertsSingleACorrectly(){
-        assertEquals("A", RegexTokenToStringConverter.convert(RegexTokenOfSingleSymbolA()));
+        assertEquals("a", RegexTokenToStringConverter.convert(RegexTokenOfSingleSymbolA()));
     }
 
     @Test
     void convertsConcatCorrectly(){
-        assertEquals("(AB)", RegexTokenToStringConverter.convert(RegexTokenOfConcatAandB()));
+        assertEquals("(ab)", RegexTokenToStringConverter.convert(RegexTokenOfConcatAandB()));
     }
 
     @Test
     void convertsUnionCorrectly(){
-        assertEquals("(A|B)", RegexTokenToStringConverter.convert(RegexTokenOfUnionOfAunionB()));
+        assertEquals("(a|b)", RegexTokenToStringConverter.convert(RegexTokenOfUnionOfAunionB()));
     }
 
     @Test
     void convertsStarredCorrectly(){
-        assertEquals("(A)*", RegexTokenToStringConverter.convert(RegexTokenOfStarredA()));
+        assertEquals("(a)*", RegexTokenToStringConverter.convert(RegexTokenOfStarredA()));
     }
 
     @Test
@@ -48,12 +48,12 @@ public class RegexTokenToStringConverterTester {
 
     @Test
     void correctlyBrackets(){
-        assertEquals("(A(BC))", RegexTokenToStringConverter.convert(RegexTokenOfGroupedAConcatWithConcatBC()));
+        assertEquals("(a(bc))", RegexTokenToStringConverter.convert(RegexTokenOfGroupedAConcatWithConcatBC()));
     }
 
     @Test
     void convertsNestedCorrectly(){
-        assertEquals("((AB))*", RegexTokenToStringConverter.convert(RegexTokenOfNestedAConcatBSurroundedByStar()));
+        assertEquals("((ab))*", RegexTokenToStringConverter.convert(RegexTokenOfNestedAConcatBSurroundedByStar()));
     }
 
     @Test

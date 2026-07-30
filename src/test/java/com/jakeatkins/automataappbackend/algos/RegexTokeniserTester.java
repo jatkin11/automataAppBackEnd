@@ -20,33 +20,33 @@ public class RegexTokeniserTester {
     
 @Test
 void tokenisesSingleACorrectly(){
-    assertEquals(RegexTokenOfSingleSymbolA(), new RegexTokeniser("A").tokenise());
+    assertEquals(RegexTokenOfSingleSymbolA(), new RegexTokeniser("a").tokenise());
 }
 
 @Test
 void tokenisesConcatABCorrectly(){
-    assertEquals(RegexTokenOfConcatAandB(), new RegexTokeniser("AB").tokenise());
+    assertEquals(RegexTokenOfConcatAandB(), new RegexTokeniser("ab").tokenise());
 }
 
 @Test
 void tokensisesUnionABCorrectly(){
-    assertEquals(RegexTokenOfUnionOfAunionB(), new RegexTokeniser("A|B").tokenise());
+    assertEquals(RegexTokenOfUnionOfAunionB(), new RegexTokeniser("a|b").tokenise());
 }
 
 
 @Test
 void tokenisesStarredACorrectly(){
-    assertEquals(RegexTokenOfStarredA(), new RegexTokeniser("A*").tokenise());
+    assertEquals(RegexTokenOfStarredA(), new RegexTokeniser("a*").tokenise());
 }
 
 @Test
 void tokenisesGroupedCorrectly(){
-    assertEquals(RegexTokenOfGroupedAConcatWithConcatBC(), new RegexTokeniser("A(BC)").tokenise());
+    assertEquals(RegexTokenOfGroupedAConcatWithConcatBC(), new RegexTokeniser("a(bc)").tokenise());
 }
 
 @Test
 void tokenisesNestedCorrectly(){
-        assertEquals(RegexTokenOfNestedAConcatBSurroundedByStar(), new RegexTokeniser("(AB)*").tokenise());
+        assertEquals(RegexTokenOfNestedAConcatBSurroundedByStar(), new RegexTokeniser("(ab)*").tokenise());
 }
 
 
@@ -91,12 +91,12 @@ void rejectsInvalidChars(){
 
 @Test
 void correctPrecedenceOfStarOverConcat(){
-    assertEquals(RegexTokenStarOverConcatABSTAR(), new RegexTokeniser("AB*").tokenise());
+    assertEquals(RegexTokenStarOverConcatABSTAR(), new RegexTokeniser("ab*").tokenise());
 }
 
 @Test
 void correctPrecedenceOfConcatOverUnion(){
-        assertEquals(RegexTokenConcatOverUnionABunionCD(), new RegexTokeniser("AB|CD").tokenise());
+        assertEquals(RegexTokenConcatOverUnionABunionCD(), new RegexTokeniser("ab|cd").tokenise());
 }
 
 //COULD PROBABLY ADD GLUSHKOV POSITION TESTS HERE
