@@ -1,10 +1,16 @@
 package com.jakeatkins.automataappbackend.validators;
 
-import com.jakeatkins.automataappbackend.dto.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import com.jakeatkins.automataappbackend.exceptions.*;
+
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
+import com.jakeatkins.automataappbackend.dto.ReactFlowEdge;
+import com.jakeatkins.automataappbackend.dto.ReactFlowGraph;
+import com.jakeatkins.automataappbackend.dto.ReactFlowNode;
+import com.jakeatkins.automataappbackend.exceptions.InvalidReactFlowGraphException;
 
 public class ReactFlowGraphValidator {
     
@@ -17,21 +23,21 @@ public class ReactFlowGraphValidator {
             throw new InvalidReactFlowGraphException("React Flow Graph cannot be null");
         }
 
-        if(rfg.getNodes()==null){
+        if(rfg.nodes()==null){
             throw new InvalidReactFlowGraphException("React Flow Graph nodes cannot be null");
         }
 
-        if(rfg.getEdges()==null){
+        if(rfg.edges()==null){
             throw new InvalidReactFlowGraphException("React Flow Graph edges cannot be null");
         }
 
-        if(rfg.getNodes().size() < 1){
+        if(rfg.nodes().size() < 1){
             throw new InvalidReactFlowGraphException("React Flow Graph must have at least one node");
         }
 
-        Set<Integer> validatedNodeIds = validateNodes(rfg.getNodes());
+        Set<Integer> validatedNodeIds = validateNodes(rfg.nodes());
 
-        validateEdges(rfg.getEdges(),validatedNodeIds);
+        validateEdges(rfg.edges(),validatedNodeIds);
         checkForIsolatedNodes(rfg);
 
     }
@@ -45,29 +51,29 @@ public class ReactFlowGraphValidator {
             if(node == null){
                 throw new InvalidReactFlowGraphException("Node cannot be null");
             }
-            if(node.getId() == null){
+            if(node.id() == null){
                 throw new InvalidReactFlowGraphException("Node ID cannot be null");
             }
-            if(node.getId().isBlank()){
+            if(node.id().isBlank()){
                 throw new InvalidReactFlowGraphException("Node ID cannot be blank");
             }
-            if(node.getData() == null){
+            if(node.data() == null){
                 throw new InvalidReactFlowGraphException("Node data cannot be null");
             }
-            if(node.getData().getLabel() == null){
-                throw new InvalidReactFlowGraphException("Node: " + node.getId() + "label is null");
+            if(node.data().label() == null){
+                throw new InvalidReactFlowGraphException("Node: " + node.id() + "label is null");
             }
-            if(node.getData().getLabel().isBlank()){
-                throw new InvalidReactFlowGraphException("Node: " + node.getId() + "label is blank");
+            if(node.data().label().isBlank()){
+                throw new InvalidReactFlowGraphException("Node: " + node.id() + "label is blank");
             }
 
-            Integer id = getIdInt(node.getId());
+            Integer id = getIdInt(node.id());
             
             if(nodeIds.contains(id)){
                 throw new InvalidReactFlowGraphException("React Flow Graph cannot contain duplicates nodes");
             }
 
-            if(node.getData().isStartingState()){
+            if(node.data().startingState()){
                 startingStateCount++;
             }
             nodeIds.add(id);
@@ -90,29 +96,29 @@ public class ReactFlowGraphValidator {
             if(edge == null){
                 throw new InvalidReactFlowGraphException("Edge cannot be null");
             }
-            if(edge.getId() == null){
+            if(edge.id() == null){
                 throw new InvalidReactFlowGraphException("Edge ID cannot be null");
             }
-            if(edge.getId().isBlank()){
+            if(edge.id().isBlank()){
                 throw new InvalidReactFlowGraphException("Edge ID cannot be blank");
             }
-            if(edgeIds.contains(edge.getId())){
+            if(edgeIds.contains(edge.id())){
                 throw new InvalidReactFlowGraphException("React Flow Graph cannot contain duplicate edges");
             }
-            if(edge.getSource()== null){
+            if(edge.source()== null){
                 throw new InvalidReactFlowGraphException("Source ID cannot be null");
             }
-            if(edge.getSource().isBlank()){
+            if(edge.source().isBlank()){
                 throw new InvalidReactFlowGraphException("Source ID cannot be blank"); 
             }
-            if(edge.getTarget()== null){
+            if(edge.target()== null){
                 throw new InvalidReactFlowGraphException("Target ID cannot be null"); 
             }
-            if(edge.getTarget().isBlank()){
+            if(edge.target().isBlank()){
                 throw new InvalidReactFlowGraphException("Target ID cannot be blank");
             }
-            Integer source = getIdInt(edge.getSource());
-            Integer target = getIdInt(edge.getTarget());
+            Integer source = getIdInt(edge.source());
+            Integer target = getIdInt(edge.target());
 
             if(!validatedNodes.contains(source)){
                 throw new InvalidReactFlowGraphException("Source ID not a node in the React Flow Graph nodes");
@@ -120,8 +126,8 @@ public class ReactFlowGraphValidator {
             if(!validatedNodes.contains(target)){
                 throw new InvalidReactFlowGraphException("Target ID not a node in the React Flow Graph nodes");
             }
-            edgeLabels.add(edge.getLabel());
-            edgeIds.add(edge.getId());
+            edgeLabels.add(edge.label());
+            edgeIds.add(edge.id());
         }
         validateEdgeLabels(edgeLabels);
     }
@@ -187,12 +193,12 @@ public class ReactFlowGraphValidator {
     }
 
     private static void checkForIsolatedNodes(ReactFlowGraph rfg){
-        Set<Integer> nodes = rfg.getNodes().stream().map(r->getIdInt(r.getId())).collect(Collectors.toSet());
+        Set<Integer> nodes = rfg.nodes().stream().map(r->getIdInt(r.id())).collect(Collectors.toSet());
         if(nodes.size()==1){
             return;
         }
-        Set<Integer> sourceNodes = rfg.getEdges().stream().map(r->getIdInt(r.getSource())).collect(Collectors.toSet());
-        Set<Integer> targetNodes = rfg.getEdges().stream().map(r->getIdInt(r.getTarget())).collect(Collectors.toSet());
+        Set<Integer> sourceNodes = rfg.edges().stream().map(r->getIdInt(r.source())).collect(Collectors.toSet());
+        Set<Integer> targetNodes = rfg.edges().stream().map(r->getIdInt(r.target())).collect(Collectors.toSet());
 
         for(Integer node: nodes){
             if(!sourceNodes.contains(node) && !targetNodes.contains(node)){
