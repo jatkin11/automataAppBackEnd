@@ -2,6 +2,7 @@ package com.jakeatkins.automataappbackend.utilities;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,23 +62,41 @@ public class TestAutomataCreator {
 
     public static NFA nfaWithStarredA(){
        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
-        transitionMap.put(0,Map.of('a', Set.of(0)));
+        transitionMap.put(0,Map.of('a', Set.of(1)));
+        transitionMap.put(1,Map.of('a', Set.of(1)));
         Integer startState = 0;
         Set<Character> alphabet = Set.of('a');
-        Set<Integer> acceptingStates = Set.of(0);
-        Set<Integer> states = Set.of(0);
-        Map<Integer,String> stateLabelMap = Map.of(0,"q0");
+        Set<Integer> acceptingStates = Set.of(0,1);
+        Set<Integer> states = Set.of(0,1);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1");
 
         return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
     }
 
-    // public static NFA nfaWithUnionAorB(){
+    public static NFA nfaWithUnionAorB(){
+       Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1),'b', Set.of(2)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a','b');
+        Set<Integer> acceptingStates = Set.of(1,2);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"q2");
 
-    // }
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+    }
 
-    // public static NFA nfaWithConcatAB(){
+    public static NFA nfaWithConcatAB(){
+       Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1)));
+        transitionMap.put(1,Map.of('b', Set.of(2)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a','b');
+        Set<Integer> acceptingStates = Set.of(2);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"q2");
 
-    // }
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+    }
 
     public static NFA nfaWithTwoEpsilonJumpThenA(){
        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
@@ -93,9 +112,18 @@ public class TestAutomataCreator {
         return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
     }
 
-    // public static NFA nfaEmptyWord(){
+    public static NFA nfaEmptyWord(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        Integer startState = 0;
+        Set<Character> alphabet = new HashSet<>();
+        Set<Integer> acceptingStates = new HashSet<>();
+        Set<Integer> states = Set.of(0);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0");
 
-    // }
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+
+    }
+
 
     // public static NFA nfaEndingWithAB(){
 
@@ -103,16 +131,36 @@ public class TestAutomataCreator {
     // }
 
 
-    // public static NFA nfaWithEpsilonLoop(){
+    public static NFA nfaWithEpsilonOnly(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        Integer startState = 0;
+        Set<Character> alphabet = new HashSet<>();
+        Set<Integer> acceptingStates = Set.of(0);
+        Set<Integer> states = Set.of(0);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0");
+
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+
+    }
 
 
-    // }
 
+    public static NFA nfaComplex(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1,3),'b',Set.of(2)));
+        transitionMap.put(1,Map.of('a', Set.of(1,3),'b',Set.of(2)));
+        transitionMap.put(2,Map.of('a', Set.of(1,3),'b',Set.of(2)));
+        transitionMap.put(3,Map.of('b', Set.of(4)));
+        transitionMap.put(4,Map.of('b', Set.of(5)));
 
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a','b');
+        Set<Integer> acceptingStates = Set.of(5);
+        Set<Integer> states = Set.of(0,1,2,3,4,5);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"q2",3,"q3",4,"q4",5,"q5");
 
-    // public static DFA dfaWithEvenNumberOfA(){
-
-    // }
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+    }
 
 
     public static NFA nfaWithMultipleBranches(){

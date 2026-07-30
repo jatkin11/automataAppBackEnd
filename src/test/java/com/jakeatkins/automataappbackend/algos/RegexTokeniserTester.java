@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import com.jakeatkins.automataappbackend.exceptions.InvalidRegexException;
+import static com.jakeatkins.automataappbackend.utilities.TestRegexTokenCreator.RegexTokenConcatOverUnionABunionCD;
 import static com.jakeatkins.automataappbackend.utilities.TestRegexTokenCreator.RegexTokenOfConcatAandB;
 import static com.jakeatkins.automataappbackend.utilities.TestRegexTokenCreator.RegexTokenOfEmptySet;
 import static com.jakeatkins.automataappbackend.utilities.TestRegexTokenCreator.RegexTokenOfGroupedAConcatWithConcatBC;
@@ -14,7 +15,6 @@ import static com.jakeatkins.automataappbackend.utilities.TestRegexTokenCreator.
 import static com.jakeatkins.automataappbackend.utilities.TestRegexTokenCreator.RegexTokenOfStarredA;
 import static com.jakeatkins.automataappbackend.utilities.TestRegexTokenCreator.RegexTokenOfUnionOfAunionB;
 import static com.jakeatkins.automataappbackend.utilities.TestRegexTokenCreator.RegexTokenStarOverConcatABSTAR;
-import static com.jakeatkins.automataappbackend.utilities.TestRegexTokenCreator.RegexTokenConcatOverUnionABunionCD;
 
 public class RegexTokeniserTester {
     
@@ -98,5 +98,7 @@ void correctPrecedenceOfStarOverConcat(){
 void correctPrecedenceOfConcatOverUnion(){
         assertEquals(RegexTokenConcatOverUnionABunionCD(), new RegexTokeniser("AB|CD").tokenise());
 }
+
+//COULD PROBABLY ADD GLUSHKOV POSITION TESTS HERE
 
 }
