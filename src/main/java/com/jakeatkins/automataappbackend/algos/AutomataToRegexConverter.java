@@ -6,9 +6,15 @@ import java.util.Map;
 import java.util.Set;
 
 import com.jakeatkins.automataappbackend.automata.Automata;
-import com.jakeatkins.automataappbackend.regex.*;
-import com.jakeatkins.automataappbackend.validators.*;
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
+import com.jakeatkins.automataappbackend.regex.RegexConcat;
+import com.jakeatkins.automataappbackend.regex.RegexEmptySet;
+import com.jakeatkins.automataappbackend.regex.RegexEpsilon;
+import com.jakeatkins.automataappbackend.regex.RegexStarred;
+import com.jakeatkins.automataappbackend.regex.RegexSymbol;
+import com.jakeatkins.automataappbackend.regex.RegexToken;
+import com.jakeatkins.automataappbackend.regex.RegexUnion;
+import com.jakeatkins.automataappbackend.validators.AutomataValidator;
 
 public class AutomataToRegexConverter {
     
@@ -20,7 +26,7 @@ public class AutomataToRegexConverter {
 
     public AutomataToRegexConverter(Automata automata){
         AutomataValidator.validate(automata);
-        Set<Integer> currentStates = new HashSet<>(automata.getStates());
+        Set<Integer> currentStates = new HashSet<>(automata.states());
         this.newStartState = UniqueStateGenerator.generate(currentStates);
         currentStates.add(this.newStartState);
         this.newFinalState = UniqueStateGenerator.generate(currentStates);
@@ -28,7 +34,7 @@ public class AutomataToRegexConverter {
     }
 
     public RegexToken convert(){
-        Set<Integer> rippableStates = new HashSet<>(this.automata.getStates());
+        Set<Integer> rippableStates = new HashSet<>(this.automata.states());
         Set<Integer> allStates = new HashSet<>(rippableStates);
         
         allStates.add(newStartState);
@@ -81,13 +87,13 @@ public class AutomataToRegexConverter {
             }
         }
 
-        for(Integer acceptingState : this.automata.getAcceptingStates()){
+        for(Integer acceptingState : this.automata.acceptingStates()){
             addTransition(acceptingState,this.newFinalState, new RegexEpsilon());
         }
 
-        addTransition(this.newStartState, this.automata.getStartState(), new RegexEpsilon());
+        addTransition(this.newStartState, this.automata.startState(), new RegexEpsilon());
 
-        for(Map.Entry<Integer,Map<Character,Set<Integer>>> sourceEntry : automata.getTransitionMap().entrySet()){
+        for(Map.Entry<Integer,Map<Character,Set<Integer>>> sourceEntry : automata.transitionMap().entrySet()){
 
             Integer source = sourceEntry.getKey();
 

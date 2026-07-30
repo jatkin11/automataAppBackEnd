@@ -8,7 +8,9 @@ import java.util.Set;
 import com.jakeatkins.automataappbackend.automata.Automata;
 import com.jakeatkins.automataappbackend.automata.NFA;
 import com.jakeatkins.automataappbackend.regex.RegexToken;
-import com.jakeatkins.automataappbackend.validators.*;
+import com.jakeatkins.automataappbackend.validators.AutomataValidator;
+import com.jakeatkins.automataappbackend.validators.RegexValidator;
+import com.jakeatkins.automataappbackend.validators.WordValidator;
 
 public class WordTester {
 
@@ -17,10 +19,10 @@ public static boolean testAutomata(Automata automata, String word){
     AutomataValidator.validate(automata);
     WordValidator.validate(word);
 
-    Map<Integer,Map<Character,Set<Integer>>> transitionMap = automata.getTransitionMap();
+    Map<Integer,Map<Character,Set<Integer>>> transitionMap = automata.transitionMap();
 
     Set<Integer> startStates = new HashSet<>();
-    startStates.add(automata.getStartState());
+    startStates.add(automata.startState());
 
     Set<Integer> states = new HashSet<>(EpsilonClosure.epsilonClosure(startStates, transitionMap));
     
@@ -28,15 +30,15 @@ public static boolean testAutomata(Automata automata, String word){
         Set<Integer> nextStates = new HashSet<>();
 
         for(Integer state: states){
-            Set<Integer> reachableStates = automata.getTransitionMap().getOrDefault(state,Collections.emptyMap()).getOrDefault(symbol,Collections.emptySet());
+            Set<Integer> reachableStates = automata.transitionMap().getOrDefault(state,Collections.emptyMap()).getOrDefault(symbol,Collections.emptySet());
             nextStates.addAll(reachableStates);
         }
 
-        states = EpsilonClosure.epsilonClosure(nextStates, automata.getTransitionMap());
+        states = EpsilonClosure.epsilonClosure(nextStates, automata.transitionMap());
     }
 
     for(Integer state : states){
-        if(automata.getAcceptingStates().contains(state)){
+        if(automata.acceptingStates().contains(state)){
             return true;
         }
     }

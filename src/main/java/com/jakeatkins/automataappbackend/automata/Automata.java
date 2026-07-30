@@ -5,18 +5,20 @@ import java.util.Set;
 
 public interface Automata {
 
-        Set<Character> getAlphabet();
+        Set<Character> alphabet();
 
-        Integer getStartState();
+        Integer startState();
 
-        Set<Integer> getAcceptingStates();
+        Set<Integer> acceptingStates();
 
-        Set<Integer> getStates();
+        Set<Integer> states();
 
-        Map<Integer, Map<Character, Set<Integer>>> getTransitionMap();
+        Map<Integer, Map<Character, Set<Integer>>> transitionMap();
 
-        Map<Integer, String> getStateLabelMap();
+        Map<Integer, String> stateLabelMap();
 
-        String getLabel(Integer state);
+        default String getLabel(Integer state){
+                return stateLabelMap().get(state);
+        };
 
 }

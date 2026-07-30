@@ -8,10 +8,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
 import com.jakeatkins.automataappbackend.automata.DFA;
 import com.jakeatkins.automataappbackend.automata.NFA;
-import com.jakeatkins.automataappbackend.validators.*;
+import com.jakeatkins.automataappbackend.validators.AutomataValidator;
 
 
 public class NfaToDfaConverter {
@@ -28,7 +29,7 @@ public class NfaToDfaConverter {
         Set<Integer> states = new HashSet<>();
         Set<Integer> acceptingStates = new HashSet<>();
         
-        Set<Character> alphabet = new HashSet<>(nfa.getAlphabet());
+        Set<Character> alphabet = new HashSet<>(nfa.alphabet());
         alphabet.remove(EPSILON);
 
         Map<Integer,Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
@@ -36,16 +37,16 @@ public class NfaToDfaConverter {
         Map<Integer,String> stateLabelMap = new HashMap<>();
         Map<Set<Integer>,Integer> multipleStatesToSingleDfaIdMap = new HashMap<>();
         
-        Set<Integer> dfaStartingStateSet = EpsilonClosure.epsilonClosure(Set.of(nfa.getStartState()), nfa.getTransitionMap());
+        Set<Integer> dfaStartingStateSet = EpsilonClosure.epsilonClosure(Set.of(nfa.startState()), nfa.transitionMap());
 
-        if(!Collections.disjoint(dfaStartingStateSet, nfa.getAcceptingStates())){
+        if(!Collections.disjoint(dfaStartingStateSet, nfa.acceptingStates())){
             acceptingStates.add(startState);
         }
 
         multipleStatesToSingleDfaIdMap.put(dfaStartingStateSet,startState); 
         states.add(startState);
 
-        stateLabelMap.put(startState,subsetLabelGenerator(dfaStartingStateSet,nfa.getStateLabelMap())); 
+        stateLabelMap.put(startState,subsetLabelGenerator(dfaStartingStateSet,nfa.stateLabelMap())); 
 
         Deque<Set<Integer>> unmarkedStates = new ArrayDeque<>();
 
@@ -61,11 +62,11 @@ public class NfaToDfaConverter {
 
                 for(Integer state : currentSetStates){
 
-                    Set<Integer> targetStates = nfaTransitionLookup(state, symbol, nfa.getTransitionMap());
+                    Set<Integer> targetStates = nfaTransitionLookup(state, symbol, nfa.transitionMap());
                     tempSet.addAll(targetStates);
                 }
                 
-                Set<Integer> nextSet = EpsilonClosure.epsilonClosure(tempSet, nfa.getTransitionMap());
+                Set<Integer> nextSet = EpsilonClosure.epsilonClosure(tempSet, nfa.transitionMap());
 
                 if(!multipleStatesToSingleDfaIdMap.containsKey(nextSet)){
                     Integer nextId = idGen.next();
@@ -73,8 +74,8 @@ public class NfaToDfaConverter {
                     states.add(nextId);
                     unmarkedStates.push(nextSet);
 
-                    stateLabelMap.put(nextId,subsetLabelGenerator(nextSet,nfa.getStateLabelMap())); 
-                    if(!Collections.disjoint(nextSet, nfa.getAcceptingStates())){
+                    stateLabelMap.put(nextId,subsetLabelGenerator(nextSet,nfa.stateLabelMap())); 
+                    if(!Collections.disjoint(nextSet, nfa.acceptingStates())){
                     acceptingStates.add(nextId);
                     }
                 }

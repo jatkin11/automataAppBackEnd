@@ -10,8 +10,12 @@ import java.util.stream.Collectors;
 
 import com.jakeatkins.automataappbackend.automata.Automata;
 import com.jakeatkins.automataappbackend.automata.NFA;
-import com.jakeatkins.automataappbackend.dto.*;
-import com.jakeatkins.automataappbackend.validators.*;
+import com.jakeatkins.automataappbackend.dto.NodeData;
+import com.jakeatkins.automataappbackend.dto.Position;
+import com.jakeatkins.automataappbackend.dto.ReactFlowEdge;
+import com.jakeatkins.automataappbackend.dto.ReactFlowGraph;
+import com.jakeatkins.automataappbackend.dto.ReactFlowNode;
+import com.jakeatkins.automataappbackend.validators.AutomataValidator;
 
 
 public class AutomataToReactFlowGraphMapper {
@@ -29,7 +33,7 @@ public class AutomataToReactFlowGraphMapper {
         List<ReactFlowEdge> edges = new ArrayList<>();
         Map<SourceTargetPairStates,Set<Character>> groupedLabelsPerSourceTargetMap = new HashMap<>();    
         
-        for(Map.Entry<Integer, Map<Character,Set<Integer>>> mapSource : automata.getTransitionMap().entrySet()){
+        for(Map.Entry<Integer, Map<Character,Set<Integer>>> mapSource : automata.transitionMap().entrySet()){
 
             Integer source = mapSource.getKey();
             
@@ -72,15 +76,15 @@ public class AutomataToReactFlowGraphMapper {
     }
 
     private static List<ReactFlowNode> createReactFlowNodes(Automata automata){
-        return automata.getStates()
+        return automata.states()
         .stream().sorted()
         .map(r -> new ReactFlowNode(
             generateNodeId(r),
             new Position(100*r,100*r),
             new NodeData(
                 automata.getLabel(r),
-                automata.getStartState().equals(r),
-                automata.getAcceptingStates().contains(r)
+                automata.startState().equals(r),
+                automata.acceptingStates().contains(r)
             ),NODE_TYPE)
             
         ).toList();

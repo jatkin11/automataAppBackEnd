@@ -5,23 +5,24 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.jakeatkins.automataappbackend.automata.*;
-import com.jakeatkins.automataappbackend.validators.*;
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
+import com.jakeatkins.automataappbackend.automata.DFA;
+import com.jakeatkins.automataappbackend.automata.NFA;
+import com.jakeatkins.automataappbackend.validators.AutomataValidator;
 
 public class DfaReverser {
 
     public static NFA reverse(DFA dfa){
         AutomataValidator.validate(dfa);
         Map<Integer,Map<Character,Set<Integer>>> newTransitionMap = new HashMap<>();
-        Set<Integer> newStates = new HashSet<>(dfa.getStates());
+        Set<Integer> newStates = new HashSet<>(dfa.states());
         Integer NEW_START_STATE = UniqueStateGenerator.generate(newStates);
         newStates.add(NEW_START_STATE);
-        Set<Integer> newAcceptingStates = Set.of(dfa.getStartState());
+        Set<Integer> newAcceptingStates = Set.of(dfa.startState());
         
-        for(Integer oldFromState : dfa.getTransitionMap().keySet()){
+        for(Integer oldFromState : dfa.transitionMap().keySet()){
 
-            for(Map.Entry<Character,Set<Integer>> entries : dfa.getTransitionMap().get(oldFromState).entrySet()){
+            for(Map.Entry<Character,Set<Integer>> entries : dfa.transitionMap().get(oldFromState).entrySet()){
 
                 char symbol = entries.getKey();
                 
@@ -32,15 +33,15 @@ public class DfaReverser {
            }
         }
 
-        for(Integer dfaAcceptingState : dfa.getAcceptingStates()){
+        for(Integer dfaAcceptingState : dfa.acceptingStates()){
             newTransitionMap.computeIfAbsent(NEW_START_STATE, r-> new HashMap<>())
             .computeIfAbsent(EPSILON, r-> new HashSet<>()).add(dfaAcceptingState);
         }
 
-        Map<Integer,String> newStateLabelMap = new HashMap<>(dfa.getStateLabelMap());
+        Map<Integer,String> newStateLabelMap = new HashMap<>(dfa.stateLabelMap());
         newStateLabelMap.put(NEW_START_STATE, "q" + NEW_START_STATE);
 
-        Set<Character> newAlphabet = new HashSet<>(dfa.getAlphabet());
+        Set<Character> newAlphabet = new HashSet<>(dfa.alphabet());
 
         return new NFA(NEW_START_STATE, newStates, newAcceptingStates, newAlphabet,newTransitionMap,newStateLabelMap);
     }

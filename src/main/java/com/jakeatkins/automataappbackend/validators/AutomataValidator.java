@@ -1,11 +1,13 @@
 package com.jakeatkins.automataappbackend.validators;
 
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
-import com.jakeatkins.automataappbackend.automata.*;
-import com.jakeatkins.automataappbackend.exceptions.InvalidAutomataException;
+import com.jakeatkins.automataappbackend.automata.Automata;
 import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
+import com.jakeatkins.automataappbackend.automata.DFA;
+import com.jakeatkins.automataappbackend.automata.NFA;
+import com.jakeatkins.automataappbackend.exceptions.InvalidAutomataException;
 
 public class AutomataValidator {
     
@@ -19,58 +21,58 @@ public class AutomataValidator {
             throw new InvalidAutomataException("Automata cannot be null");
         }
         
-        if(automata.getAcceptingStates() == null){
+        if(automata.acceptingStates() == null){
             throw new InvalidAutomataException("Automata accepting states cannot be null");
         }
 
-        if(automata.getAlphabet() == null){
+        if(automata.alphabet() == null){
             throw new InvalidAutomataException("Automata alphabet cannot be null");
         }
 
-        if(automata.getStartState() == null){
+        if(automata.startState() == null){
             throw new InvalidAutomataException("Automata start state cannot be null");
         }
 
-        if(automata.getStates() == null){
+        if(automata.states() == null){
             throw new InvalidAutomataException("Automata states cannot be null");
         }
 
-        if(automata.getStateLabelMap() == null){
+        if(automata.stateLabelMap() == null){
             throw new InvalidAutomataException("Automata state to label map cannot be null");
         }
 
-        if(automata.getTransitionMap() == null){
+        if(automata.transitionMap() == null){
             throw new InvalidAutomataException("Automata transition map cannot be null");
         }
 
-        if(automata.getStates().size() < 1){
+        if(automata.states().size() < 1){
             throw new InvalidAutomataException("Automata must have at least one state");
         }
 
-        if(!automata.getStates().containsAll(automata.getAcceptingStates())){
+        if(!automata.states().containsAll(automata.acceptingStates())){
             throw new InvalidAutomataException("Automata states must include all accepting states");
         }
 
-        if(!automata.getStates().contains(automata.getStartState())){
+        if(!automata.states().contains(automata.startState())){
             throw new InvalidAutomataException("Automata states must include the starting state");
         }
 
-        if(!validateAlphabet(automata.getAlphabet())){
+        if(!validateAlphabet(automata.alphabet())){
             throw new InvalidAutomataException("Automata has invalid alphabet");
         }
 
-        if(!automata.getStates().containsAll(automata.getStateLabelMap().keySet())){
+        if(!automata.states().containsAll(automata.stateLabelMap().keySet())){
             throw new InvalidAutomataException("State Label Map contains states not in Automata States");
         }
 
-        if(!automata.getStateLabelMap().keySet().containsAll(automata.getStates())){
+        if(!automata.stateLabelMap().keySet().containsAll(automata.states())){
             throw new InvalidAutomataException("Missing states from state label map");
         }
 
     }
 
     private static void validateTransitions(Automata automata){
-        for(Map.Entry<Integer,Map<Character,Set<Integer>>> transitions : automata.getTransitionMap().entrySet()){
+        for(Map.Entry<Integer,Map<Character,Set<Integer>>> transitions : automata.transitionMap().entrySet()){
             
             Integer source = transitions.getKey();
 
@@ -78,7 +80,7 @@ public class AutomataValidator {
                 throw new InvalidAutomataException("Transition source cannot be null");
             }
 
-            if(!automata.getStates().contains(source)){
+            if(!automata.states().contains(source)){
                 throw new InvalidAutomataException("Automata states must contain transition source state");
             }
 
@@ -109,7 +111,7 @@ public class AutomataValidator {
                     if(!validateSymbol(symbol)){
                         throw new InvalidAutomataException("Invalid symbol: " + symbol);
                     }
-                    if(!automata.getAlphabet().contains(symbol)){
+                    if(!automata.alphabet().contains(symbol)){
                     throw new InvalidAutomataException("Alpabet missing symbol: " + symbol);
                     }
                 }
@@ -127,7 +129,7 @@ public class AutomataValidator {
                         throw new InvalidAutomataException("target state cannot be null in transtion map");
                     }
 
-                    if(!automata.getStates().contains(target)){
+                    if(!automata.states().contains(target)){
                         throw new InvalidAutomataException("Automata states must contain all target states from transition map");
                     }
                 }
