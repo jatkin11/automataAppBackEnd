@@ -16,7 +16,7 @@ public class TestReactFlowGraphCreator {
         List<ReactFlowNode> nodes = new ArrayList<>();
 
         ReactFlowNode q0 = new ReactFlowNode("0", 
-        new Position(100,100), 
+        new Position(0,0), 
         new NodeData("q0",
         true,
         false),
@@ -29,7 +29,7 @@ public class TestReactFlowGraphCreator {
         true),
         "custom");
 
-        ReactFlowEdge q0Toq1 = new ReactFlowEdge("e0",
+        ReactFlowEdge q0Toq1 = new ReactFlowEdge("0-a->1",
         "0",
         "1",
         "a",
