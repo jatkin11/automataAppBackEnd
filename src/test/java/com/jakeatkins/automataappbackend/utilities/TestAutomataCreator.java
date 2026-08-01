@@ -416,4 +416,31 @@ public class TestAutomataCreator {
 
     }
 
+
+    public static NFA nfaVersionOfReactFlowGraphWithCommaSeparatedValues(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1),'b', Set.of(1), 'c', Set.of(1)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a','b','c');
+        Set<Integer> acceptingStates = Set.of(1);
+        Set<Integer> states = Set.of(0,1);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1");
+
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+    }
+
+
+    public static NFA nfaWithSelfLoop(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(0)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(0);
+        Set<Integer> states = Set.of(0);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0");
+
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+
+   }
+
 }
