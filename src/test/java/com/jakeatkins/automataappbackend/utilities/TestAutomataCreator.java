@@ -443,4 +443,32 @@ public class TestAutomataCreator {
 
    }
 
+   public static NFA nfaWithBranchingEpsilonJumps(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('ε', Set.of(1,2)));
+        Integer startState = 0;
+        Set<Character> alphabet = new HashSet<>();
+        Set<Integer> acceptingStates = Set.of(1,2);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"q2");
+
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+   }
+
+
+   public static NFA nfaWithEpsilonJumpCycle(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('ε', Set.of(1)));
+        transitionMap.put(1,Map.of('a', Set.of(2),'ε',Set.of(0)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(2);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"q2");
+
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+   }
+
+
+
 }
