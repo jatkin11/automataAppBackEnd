@@ -50,11 +50,44 @@ public class TestAutomataCreator {
     public static DFA dfaSingleA(){
         Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
         transitionMap.put(0,Map.of('a', Set.of(1)));
+        transitionMap.put(1,Map.of('a', Set.of(2)));
+        transitionMap.put(2,Map.of('a', Set.of(2)));
         Integer startState = 0;
         Set<Character> alphabet = Set.of('a');
         Set<Integer> acceptingStates = Set.of(1);
-        Set<Integer> states = Set.of(0,1);
-        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1");
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"∅");
+
+        return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+
+    }
+
+
+        public static DFA dfaVerseionOfNfaWithSingleA(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1)));
+        transitionMap.put(1,Map.of('a', Set.of(2)));
+        transitionMap.put(2,Map.of('a', Set.of(2)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(1);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"{q0}",1,"{q1}",2,"∅");
+
+        return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+
+    }
+
+    public static DFA dfaVersionOfNfaSingleA(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1)));
+        transitionMap.put(1,Map.of('a', Set.of(2)));
+        transitionMap.put(2,Map.of('a', Set.of(2)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(1);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"{q0}",1,"{q1}",2,"∅");
 
         return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
 
@@ -469,6 +502,45 @@ public class TestAutomataCreator {
         return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
    }
 
+   public static DFA dfaVersionOfNfaWithBranchingEpsilonJumps(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        Integer startState = 0;
+        Set<Character> alphabet = new HashSet<>();
+        Set<Integer> acceptingStates = Set.of(0);
+        Set<Integer> states = Set.of(0);
+        Map<Integer,String> stateLabelMap = Map.of(0,"{q0,q1,q2}");
 
+        return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+
+   }
+
+
+   public static DFA dfaVersionOfNfaWithTwoEpsilonJumpsThenA(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1)));
+        transitionMap.put(1,Map.of('a', Set.of(2)));
+        transitionMap.put(2,Map.of('a', Set.of(2)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(1);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"{q0,q1,q2}",1,"{q3}",2,"∅");
+
+        return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+   }
+
+
+   public static NFA nfaSingleAWithIsolatedStateToBeIgnored(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1)));
+        transitionMap.put(3,Map.of('a', Set.of(3)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(1);
+        Set<Integer> states = Set.of(0,1,3);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",3,"q3");
+
+        return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+   }
 
 }

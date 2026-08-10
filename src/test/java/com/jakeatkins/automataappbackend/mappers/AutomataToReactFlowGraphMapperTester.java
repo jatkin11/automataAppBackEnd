@@ -7,12 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import com.jakeatkins.automataappbackend.dto.ReactFlowEdge;
-
 import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaComplex;
 import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaSingleA;
 import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaWithMultipleBranches;
-import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaWithTwoEpsilonJumpThenA;
 import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaWithStarredA;
+import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaWithTwoEpsilonJumpThenA;
 import static com.jakeatkins.automataappbackend.utilities.TestReactFlowGraphCreator.reactFlowGraphValidGraph;
 
 public class AutomataToReactFlowGraphMapperTester {
