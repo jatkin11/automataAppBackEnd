@@ -236,8 +236,6 @@ public class TestAutomataCreator {
 
     }
 
-
-
     public static NFA nfaComplex(){
         Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
         transitionMap.put(0,Map.of('a', Set.of(1,3),'b',Set.of(2)));
@@ -542,5 +540,52 @@ public class TestAutomataCreator {
 
         return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
    }
+
+
+
+   public static DFA dfaMinimisedOfNfaSingleA(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1)));
+        transitionMap.put(1,Map.of('a', Set.of(2)));
+        transitionMap.put(2,Map.of('a', Set.of(2)));
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of('a');
+        Set<Integer> acceptingStates = Set.of(1);
+        Set<Integer> states = Set.of(0,1,2);
+        Map<Integer,String> stateLabelMap = Map.of(0,"{{{q0}},q3}",1,"{{{q1},q3}}",2,"∅");
+
+        return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+   }
+
+
+      public static DFA dfaMinimisedOfNfaEpsilonOnly(){
+        Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        Integer startState = 0;
+        Set<Character> alphabet = Set.of();
+        Set<Integer> acceptingStates = Set.of(0);
+        Set<Integer> states = Set.of(0);
+        Map<Integer,String> stateLabelMap = Map.of(0,"{{{q0},q1},q1}");
+
+        return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+   }
+
+
+
+       public static DFA dfaMinimisedOfNfaWithUnionAorB(){
+       Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
+        transitionMap.put(0,Map.of('a', Set.of(1),'b', Set.of(1)));
+        transitionMap.put(1,Map.of('a', Set.of(2),'b', Set.of(2)));
+        transitionMap.put(2,Map.of('a', Set.of(2),'b', Set.of(2)));
+        
+        Integer startState = 0;
+        
+        Set<Character> alphabet = Set.of('a','b');
+        Set<Integer> acceptingStates = Set.of(1);
+        Set<Integer> states = Set.of(0,1,2);
+        
+        Map<Integer,String> stateLabelMap = Map.of(0,"{{{q0}},q3}",1,"{{{q1},{q2},q4}}",2,"∅");
+
+        return new DFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
+    }
 
 }
