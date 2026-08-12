@@ -13,6 +13,7 @@ import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.df
 import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaSingleA;
 import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaSingleAWithNoAcceptingState;
 import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaSingleAWithStartStateAsAccepting;
+import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaWithBranchingEpsilonJumps;
 import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaWithStarredA;
 import static com.jakeatkins.automataappbackend.utilities.TestAutomataCreator.nfaWithTwoEpsilonJumpThenA;
 
@@ -92,7 +93,12 @@ public class WordTesterTester {
 
 
 
-
+    @Test
+    void acceptsOnBranchingPaths(){
+        NFA nfa = nfaWithBranchingEpsilonJumps();
+        assertTrue(WordTester.testAutomata(nfa, ""));
+        assertFalse(WordTester.testAutomata(nfa, "a"));
+    }
 
 
 
