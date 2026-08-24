@@ -17,7 +17,7 @@ public class DfaReverserTester {
     
     @Test
     void newStartStateCreated(){
-        assertEquals(2, DfaReverser.reverse(dfaSingleA()).startState());
+        assertEquals(3, DfaReverser.reverse(dfaSingleA()).startState());
     }
 
     @Test

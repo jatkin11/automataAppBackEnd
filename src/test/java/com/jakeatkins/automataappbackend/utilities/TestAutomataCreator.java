@@ -96,12 +96,13 @@ public class TestAutomataCreator {
     public static NFA nfaOfdfaSingleAReversed(){
         Map<Integer, Map<Character,Set<Integer>>> transitionMap = new HashMap<>();
         transitionMap.put(1,Map.of('a', Set.of(0)));
-        transitionMap.put(2,Map.of('ε',Set.of(1)));
-        Integer startState = 2;
+        transitionMap.put(2,Map.of('a',Set.of(1,2)));
+        transitionMap.put(3,Map.of('ε',Set.of(1)));
+        Integer startState = 3;
         Set<Character> alphabet = Set.of('a');
         Set<Integer> acceptingStates = Set.of(0);
-        Set<Integer> states = Set.of(0,1,2);
-        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"q2");
+        Set<Integer> states = Set.of(0,1,2,3);
+        Map<Integer,String> stateLabelMap = Map.of(0,"q0",1,"q1",2,"∅",3,"q3");
 
         return new NFA(startState, states, acceptingStates, alphabet, transitionMap, stateLabelMap);
 
