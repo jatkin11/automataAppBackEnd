@@ -23,7 +23,7 @@ public class AutomataValidator {
      * Validates the structure and transitions of an automata using helper methods
      * 
      * @param automata the automata to be validated (NFA/DFA)
-     * Throws InvalidAutomataException if fails any validation
+     * @throws InvalidAutomataException if fails any validation
      */
     public static void validate(Automata automata){
         validateStructure(automata);
@@ -44,7 +44,7 @@ public class AutomataValidator {
      * - stateLabel map contains all states from the automaton states
      * 
      * @param automata the automaton to be validated
-     * Throws InvalidAutomataException if fails any validation
+     * @throws InvalidAutomataException if fails any validation
      */
     private static void validateStructure(Automata automata){
         if(automata == null){
@@ -115,7 +115,7 @@ public class AutomataValidator {
      * - DFA only have have one target state per transition
      * 
      * @param automata
-     * Throws InvalidAutomataException if any of the checks fail
+     * @throws InvalidAutomataException if any of the checks fail
      * 
      */
     private static void validateTransitions(Automata automata){
