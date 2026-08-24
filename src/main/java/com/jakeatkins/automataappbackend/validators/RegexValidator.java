@@ -2,16 +2,28 @@ package com.jakeatkins.automataappbackend.validators;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import com.jakeatkins.automataappbackend.exceptions.*;
-import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
-import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EMPTY_SET;
-import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.OPEN_BRACKET;
-import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.CLOSED_BRACKET;
-import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.UNION;
-import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.STAR;
 
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.CLOSED_BRACKET;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EMPTY_SET;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.EPSILON;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.OPEN_BRACKET;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.STAR;
+import static com.jakeatkins.automataappbackend.automata.AutomataSymbols.UNION;
+import com.jakeatkins.automataappbackend.exceptions.InvalidRegexException;
+
+/**
+ * 
+ * RegexValidator
+ * 
+ * Validation class for user-inputted regex
+ * 
+ */
 public class RegexValidator {
  
+    /**
+     * ENUM used for the previous character entered in a regex
+     * PreviousChar
+     */
     private enum PreviousChar{
         NONE,
         VALIDCHAR,
@@ -21,6 +33,27 @@ public class RegexValidator {
         STAR
     }
 
+    /**
+     * Validates a user-inputted string regex
+     * 
+     * Checks:
+     * - regex is not null
+     * - regex is not empty string
+     * - correct union
+     * - correct concatenation
+     * - correct bracket ordering e.g. ()
+     * - regex only contains A-Z, a-z, 0-9, *, |, (, )
+     * 
+     * Normalises:
+     * - removes all whitespace
+     * 
+     * Uses switch statement for each char in the regex, whilst also checking the previous character stored in previousChar
+     * Uses stack to check correct bracket ordering
+     * 
+     * @param inputRegex the user inputted regex string
+     * @return normalised regex string without whitespace
+     * @throws InvalidRegexException if any validation fails
+     */
     public static String validate(String inputRegex){
         if(inputRegex == null){
             throw new InvalidRegexException("Regex cannot be null");
