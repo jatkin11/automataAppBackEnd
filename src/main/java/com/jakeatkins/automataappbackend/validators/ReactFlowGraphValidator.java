@@ -12,12 +12,39 @@ import com.jakeatkins.automataappbackend.dto.ReactFlowGraph;
 import com.jakeatkins.automataappbackend.dto.ReactFlowNode;
 import com.jakeatkins.automataappbackend.exceptions.InvalidReactFlowGraphException;
 
+/**
+ * 
+ * ReactFlowGraphValidator
+ * 
+ * Validation class for ReactFlowGraph DTO
+ *
+ */
 public class ReactFlowGraphValidator {
     
+    /**
+     * Validates passed ReactFlowGraph
+     * 
+     * @param rfg ReactFlowGraph to validate
+     */
     public static void validate(ReactFlowGraph rfg){
         validateGraph(rfg);
     }
 
+    /**
+     * Validates ReactGlowGraph structure:
+     *  checks:
+     * - ReactFlowGraph is not null,
+     * - composite nodes is not null
+     * - composite edges is not null
+     * - at least one node
+     * 
+     * Calls validateNodes and passes in the ReactFlowGraph nodes
+     * Calls validateEdges and passes in the ReactFlowGraph edges and validated nodes
+     * Calls checkForIsolatedNodes and passes in the ReactFlowGraph
+     * 
+     * @param rfg
+     * @throws InvalidReactFlowGraph if any validation fails
+     */
     private static void validateGraph(ReactFlowGraph rfg){
         if(rfg == null){
             throw new InvalidReactFlowGraphException("React Flow Graph cannot be null");
@@ -42,7 +69,22 @@ public class ReactFlowGraphValidator {
 
     }
 
-
+    /**
+     * Helper method for validateGraph - Validates the list of nodes passed in
+     * 
+     * checks:
+     * - nodes list is not null
+     * - no nodes are null
+     * - no nodes are blank
+     * - no nodes contain null composite data
+     * - no duplicated node IDs
+     * - exactly one starting state
+     * 
+     * 
+     * @param nodes list of ReactFlowNodes to validate
+     * @return set of validated node IDs
+     * @throws InvalidReactFlowGraphException if any validation fails
+     */
     private static Set<Integer> validateNodes(List<ReactFlowNode> nodes){
         Set<Integer> nodeIds = new HashSet<>();
         Integer startingStateCount = 0;
@@ -84,6 +126,22 @@ public class ReactFlowGraphValidator {
         return nodeIds;
     }
 
+    /**
+     * Helper method for validateGraph - validates the ReactFlowEdges passed in
+     * 
+     * Checks:
+     * - edges list is not null
+     * - no edge is null
+     * - no edge is blank
+     * - no edge has null data
+     * - validated nodes contains all source and target state IDs from all edges
+     * 
+     * calls validateEdgeLabels
+     * 
+     * @param edges list of ReactFlowEdges from ReactFlowGraph
+     * @param validatedNodes list of validate node IDs
+     * @throws InvalidReactFlowGraphException if any validation fails
+     */
     private static void validateEdges(List<ReactFlowEdge> edges, Set<Integer>validatedNodes){
         if(edges == null){
                 throw new InvalidReactFlowGraphException("React Flow Graph edges cannot be null");
@@ -132,6 +190,17 @@ public class ReactFlowGraphValidator {
         validateEdgeLabels(edgeLabels);
     }
 
+    /**
+     * Helper method for validateEdges - validates edge labels
+     * 
+     * Checks:
+     * no null labels
+     * 
+     * calls validateEdgeLabelString for each label
+     * 
+     * @param labels list of all edge labels
+     * @throws InvalidReactFlowGraphException if any validation fails
+     */
     private static void validateEdgeLabels(List<String> labels){
         if(labels == null){
                 throw new InvalidReactFlowGraphException("Labels cannot be null");
@@ -143,6 +212,20 @@ public class ReactFlowGraphValidator {
 
     }
 
+    /**
+     * Helper method for validateEdgeLabels - validates edge label strings
+     * 
+     * checks:
+     * - label string is not null
+     * - removes all whitespace, then checks label is not blank
+     * - splits comma separated label symbols into string array
+     * - checks each symbol is not null
+     * - checks each symbol is not blank
+     * - checks each symbol is valid i.e. A-Z, a-z, 0-9, ε
+     *  
+     * @param label string of label to validated
+     * @throws InvalidReactFlowGraphException if any validation fails
+     */
     private static void validateEdgeLabelString(String label){
         if(label == null){
                 throw new InvalidReactFlowGraphException("edge label cannot be null");
@@ -176,6 +259,15 @@ public class ReactFlowGraphValidator {
         }
     }
 
+    /**
+     * Helper method for validatesEdges and validateNodes
+     * 
+     * Returns the Int of the String ID contained in a ReactFlowGraph
+     * 
+     * @param id String node ID from ReactFlowGraph
+     * @return parsed node ID int
+     * @throws InvalidReactFlowGraphException if any validation fails, catches NumberFormatException
+     */
     public static Integer getIdInt(String id){
         if(id== null){
                 throw new InvalidReactFlowGraphException("ID cannot be null");
@@ -192,6 +284,16 @@ public class ReactFlowGraphValidator {
         }
     }
 
+    /**
+     * Helper method for validateGraph
+     * 
+     * Checks:
+     * - if node size equals 1 of graph it passes validation as single state automaton are allowed
+     * - if node size doesn't equal 1, that all source and target node IDs collectively contain all every node, i.e. no node ID is isolated without an incoming/outgoing transition
+     * 
+     * @param rfg the ReactFlowGraph
+     * @throws InvalidReactFlowGraphException if any validation fails
+     */
     private static void checkForIsolatedNodes(ReactFlowGraph rfg){
         Set<Integer> nodes = rfg.nodes().stream().map(r->getIdInt(r.id())).collect(Collectors.toSet());
         if(nodes.size()==1){
