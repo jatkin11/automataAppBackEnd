@@ -9,13 +9,43 @@ import com.jakeatkins.automataappbackend.automata.DFA;
 import com.jakeatkins.automataappbackend.automata.NFA;
 import com.jakeatkins.automataappbackend.exceptions.InvalidAutomataException;
 
+/**
+ * 
+ * AutomataValidator
+ * 
+ * Validation Class for checking the structure/transitions of an Automaton
+ * 
+ */
+
 public class AutomataValidator {
     
+    /**
+     * Validates the structure and transitions of an automata using helper methods
+     * 
+     * @param automata the automata to be validated (NFA/DFA)
+     * Throws InvalidAutomataException if fails any validation
+     */
     public static void validate(Automata automata){
         validateStructure(automata);
         validateTransitions(automata);
     }
 
+
+    /**
+     * 
+     * Validates the structre of the passed Automata
+     * 
+     * Checks:
+     * - no null entries
+     * - automaton has at least one state
+     * - automaton states contains the starting state
+     * - automaton states contains the accepting states
+     * - automaton states contains all states in the stateLabelMap
+     * - stateLabel map contains all states from the automaton states
+     * 
+     * @param automata the automaton to be validated
+     * Throws InvalidAutomataException if fails any validation
+     */
     private static void validateStructure(Automata automata){
         if(automata == null){
             throw new InvalidAutomataException("Automata cannot be null");
@@ -71,6 +101,23 @@ public class AutomataValidator {
 
     }
 
+    /**
+     * Validates the transitions within an automaton
+     * 
+     * Checks the transitions sources, targets, and symbols
+     * 
+     * Cycles through the layers of the Automaton's transitionMap to check:
+     * - no null entries
+     * - source not null
+     * - automata states contains the source state
+     * - DFA do not contain any epsilon transitions
+     * - automata states contains the target state
+     * - DFA only have have one target state per transition
+     * 
+     * @param automata
+     * Throws InvalidAutomataException if any of the checks fail
+     * 
+     */
     private static void validateTransitions(Automata automata){
         for(Map.Entry<Integer,Map<Character,Set<Integer>>> transitions : automata.transitionMap().entrySet()){
             
@@ -139,6 +186,14 @@ public class AutomataValidator {
 
     }
 
+    /**
+     * Helper method to validate the whole alphabet of an Automaton
+     * 
+     * Takes the set of alphabet characters and validates each symbol
+     * 
+     * @param alphabet set of Automaton alphabets chars
+     * @return true if all letters in the alphabet are valid, else false
+     */
     private static boolean validateAlphabet(Set<Character> alphabet){
         for(Character c: alphabet){
             if(c == null || !validateSymbol(c)){
@@ -148,6 +203,13 @@ public class AutomataValidator {
         return true;
     }
 
+
+    /**
+     * Helper method for validation Symbol characters
+     * 
+     * @param c Char to be validated 
+     * @return true if the char is A-Z, a-z, or 0-9, else false
+     */
     private static boolean validateSymbol(char c){
             return String.valueOf(c).matches("^[A-Za-z0-9]$");
     }
