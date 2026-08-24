@@ -1,5 +1,15 @@
 package com.jakeatkins.automataappbackend.automata;
 
+/**
+ * 
+ * AutomataSymbols
+ * 
+ * Centralised characters used throughout the project
+ * 
+ * Used for consistency amongst classes
+ * 
+ */
+
 public class AutomataSymbols {
     public static final char EPSILON = 'ε';
     public static final char EMPTY_SET = '∅';
