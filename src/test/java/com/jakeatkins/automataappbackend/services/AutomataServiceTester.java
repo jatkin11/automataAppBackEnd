@@ -12,7 +12,6 @@ import com.jakeatkins.automataappbackend.dto.AutomataWordTest;
 import com.jakeatkins.automataappbackend.dto.ReactFlowGraph;
 import com.jakeatkins.automataappbackend.dto.RegexString;
 import com.jakeatkins.automataappbackend.dto.RegexWordTest;
-import com.jakeatkins.automataappbackend.exceptions.InvalidAutomataException;
 import com.jakeatkins.automataappbackend.exceptions.InvalidAutomataWordTestException;
 import com.jakeatkins.automataappbackend.exceptions.InvalidReactFlowGraphException;
 import com.jakeatkins.automataappbackend.exceptions.InvalidRegexException;
@@ -100,7 +99,7 @@ public class AutomataServiceTester {
         AutomataService service = new AutomataService();
         
 
-        assertThrows(InvalidAutomataException.class,()-> service.convertToDfa(TestReactFlowGraphCreator.reactFlowGraphWithANodeWithANullId()));
+        assertThrows(InvalidReactFlowGraphException.class,()-> service.convertToDfa(TestReactFlowGraphCreator.reactFlowGraphWithANodeWithANullId()));
 
     }
 
