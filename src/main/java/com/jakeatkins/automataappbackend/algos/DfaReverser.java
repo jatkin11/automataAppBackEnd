@@ -10,8 +10,37 @@ import com.jakeatkins.automataappbackend.automata.DFA;
 import com.jakeatkins.automataappbackend.automata.NFA;
 import com.jakeatkins.automataappbackend.validators.AutomataValidator;
 
+/**
+ * 
+ * DfaReverser
+ * 
+ * Reverses a DFA into an NFA
+ * 
+ */
 public class DfaReverser {
 
+
+    /**
+     * 
+     * Reverses a DFA 
+     * 
+     * Adapted from report chapter 4.4 (Norton, 2009)
+     * 
+     * Process:
+     * - validates DFA
+     * - initialises new transition map for the reversed NFA
+     * - generates new artificial starting state
+     * - original starting state becomes the new DFA accepting state
+     * - reverses all transitions from original transitionMap and adds to new transition map e.g. 0 - a ->1 becomes 1 - a ->0
+     * - adds epsilon transition from new start state to original accepting states
+     * - copies state label map from original DFA and adds the new start state and label e.g. (0,"q0")
+     * - copies alphabet from original DFA
+     * - constructs NFA
+     * 
+     * 
+     * @param dfa DFA to reverse
+     * @return a reversed NFA
+     */
     public static NFA reverse(DFA dfa){
         AutomataValidator.validate(dfa);
         Map<Integer,Map<Character,Set<Integer>>> newTransitionMap = new HashMap<>();
