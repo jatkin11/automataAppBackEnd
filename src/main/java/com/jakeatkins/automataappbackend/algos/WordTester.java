@@ -15,7 +15,7 @@ import com.jakeatkins.automataappbackend.validators.WordValidator;
 /**
  * WordTester
  * 
- * Tests a user-inputted word on a rege x or automaon
+ * Tests a user-inputted word on a regex or automaton
  */
 public class WordTester {
 
