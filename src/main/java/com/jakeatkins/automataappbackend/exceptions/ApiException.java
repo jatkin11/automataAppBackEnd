@@ -5,7 +5,7 @@ import java.time.Instant;
 /**
  * ApiException
  * 
- * DTO for API exception used for storing information from a thrown error in the gGobalExceptionHandler to be attached to an HTTP response
+ * DTO for API exception used for storing information from a thrown error in the GobalExceptionHandler to be attached to an HTTP response
  * 
  * @param error error
  * @param message error message
