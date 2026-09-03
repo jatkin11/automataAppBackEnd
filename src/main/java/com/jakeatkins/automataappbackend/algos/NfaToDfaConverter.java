@@ -14,9 +14,24 @@ import com.jakeatkins.automataappbackend.automata.DFA;
 import com.jakeatkins.automataappbackend.automata.NFA;
 import com.jakeatkins.automataappbackend.validators.AutomataValidator;
 
-
+/**
+ * 
+ * NfaToDfaConverter
+ * 
+ * Converts an NFA to a DFA
+ * 
+ */
 public class NfaToDfaConverter {
 
+
+    /**
+     * Validates the NFA and creates a new instance of the GlobalStateIdGenerator 
+     * 
+     * Passes the validated NFA and GlobalStateIdGenerator into the subset construction 
+     * 
+     * @param nfa NFA to convert to DFA
+     * @return converted DFA
+     */
     public static DFA convert(NFA nfa){
         AutomataValidator.validate(nfa);
         GlobalStateIdGenerator idGen = new GlobalStateIdGenerator();
@@ -24,6 +39,42 @@ public class NfaToDfaConverter {
         return subsetConstruction(nfa, idGen);
     }
 
+
+    /**
+     * The subset construction for converting NFA to DFA
+     * 
+     * Adapted from the pseudocode found in the report Chapter 4.3 (Norton, 2009)
+     * 
+     * The below code combines the subset construction, with maintaining the original state labels from the NFA.
+     * e.g. If NFA states 1 and 2 are combined during the construction to DFA, the subset label "{q1,q2}" is stored in the DFA state label map with a new generated DFA ID. 
+     * The global state generator starts at 0 and for every new DFA state created increments by 1. 
+     *  This process uses:
+     * - multipleStatesToSingleDfaIdMap: NFA subsets with new DFA Ids
+     * - subsetLabelGenerator: gets labels for the NFA subsets
+     * - stateLabelMap: stores the new DFA ids with generated display labels of NFA subsets
+     *     
+     * The subset construction :
+     * - Generates new DFA start state ID
+     * - copies alphabet from NFA to new DFA alphabet
+     * - gets epsilon closure of NFA starting state using EpsilonClosure, as the dfaStartingStateSet
+     * - checks if any of the states in the dfaStartingStateSet are NFA accepting state, and if so makes the new start state accepting
+     * - adds dfaStartingStateSet to stack
+     * - while stack is not empty:
+     *      - pop a set of states from the stack,
+     *      - for each symbol in the alphabet:
+     *          - get the reachable states from the popped set into tempSet
+     *          - get the EpsilonClosure of tempSet into the NextSet
+     *          - check if NextSet has been visited already
+     *              if it isn't:
+     *                  - add NextSet to the stack
+     *                  - if NextSet contains any accepting states, makes the generated DFA ID an accepting state
+     *           - add a transtion to the new DFA transitionMap from the popped set ID, on the current symbol, to the NextSet ID
+     * - construct new DFA 
+     * 
+     * @param nfa NFA to convert
+     * @param idGen id generator passed in to create new state IDs for the new DFA
+     * @return converted DFA
+     */
     private static DFA subsetConstruction(NFA nfa, GlobalStateIdGenerator idGen){
         Integer startState = idGen.next(); 
         Set<Integer> states = new HashSet<>();
@@ -88,19 +139,35 @@ public class NfaToDfaConverter {
         return new DFA(startState,states,acceptingStates,alphabet,transitionMap,stateLabelMap);
     }
 
+
+    /**
+     * Gets the target states from a passed source state, symbol, and automata transitionMap
+     * 
+     * @param state source state to lookup
+     * @param symbol symbol to lookup from source state
+     * @param nfaTransitionMap automata transitionMap
+     * @return target states from source and symbol
+     */
     private static Set<Integer> nfaTransitionLookup(int state, char symbol, Map<Integer, Map<Character, Set<Integer>>> nfaTransitionMap){
-        if(!nfaTransitionMap.containsKey(state) ||!nfaTransitionMap.get(state).containsKey(symbol)){
-            return Collections.emptySet();
-        }
-        return nfaTransitionMap.get(state).get(symbol);
+        return nfaTransitionMap.getOrDefault(state, Collections.emptyMap()).getOrDefault(symbol, Collections.emptySet());
     }
 
-    private static String subsetLabelGenerator(Set<Integer> subset, Map<Integer,String> nfaTransitionMap){
+    /**
+     * Collects the NFA labels of states (e.g. "q1") for a set of NFA states from the NFA StateLabelMap, and joins into a string separated by commas and braces
+     * 
+     * if the subset is empty it returns "∅"
+     * if there is no label for a state in the subset, "q"+ the id in the subset is mapped
+     * 
+     * @param subset set of NFA states to lookup in the NFA stateLabelMap
+     * @param nfaStateLabelMap map of NFA states and their display labels e.g. <0,"q0">
+     * @return combined string e.g. NFA subset of (0,1,2) may return "{q0,q1,q2}"
+     */
+    private static String subsetLabelGenerator(Set<Integer> subset, Map<Integer,String> nfaStateLabelMap){
         if(subset.isEmpty()){return "∅";}
 
         return subset.stream().sorted()
         .map(r -> {
-            String label = nfaTransitionMap.get(r);
+            String label = nfaStateLabelMap.get(r);
             if(label == null ||label.isBlank()){
                 return "q" + r;
             }

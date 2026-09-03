@@ -10,10 +10,24 @@ import java.util.stream.Stream;
 
 import com.jakeatkins.automataappbackend.automata.NFA;
 import com.jakeatkins.automataappbackend.exceptions.InvalidRegexTokenException;
-import com.jakeatkins.automataappbackend.regex.*;
-import com.jakeatkins.automataappbackend.validators.*;
+import com.jakeatkins.automataappbackend.regex.RegexConcat;
+import com.jakeatkins.automataappbackend.regex.RegexEmptySet;
+import com.jakeatkins.automataappbackend.regex.RegexEpsilon;
+import com.jakeatkins.automataappbackend.regex.RegexStarred;
+import com.jakeatkins.automataappbackend.regex.RegexSymbol;
+import com.jakeatkins.automataappbackend.regex.RegexToken;
+import com.jakeatkins.automataappbackend.regex.RegexUnion;
+import com.jakeatkins.automataappbackend.validators.AutomataValidator;
 
-
+/**
+ * 
+ * RegexToNfaConverter
+ * 
+ * Converts a RegexToken tree into an NFA
+ * 
+ * Adapted from the construction found in the report Chapter 4.2 (Allauzen and Mohri, 2006)
+ *  
+ */
 public class RegexToNfaConverter {
     
     private record CurrentState(boolean nullType, Set<Integer> firstPositions, Set<Integer> lastPositions){};
@@ -23,6 +37,14 @@ public class RegexToNfaConverter {
     private final Map<Integer,String> stateLabelMap = new HashMap<>();
     private final RegexToken regex;
     
+    /**
+     * Constructor for RegexToNfaConverter instance
+     * 
+     * - Sets instance regex to the passed RegexToken
+     * 
+     * @param regex RegexToken tree to convert
+     * @throws InvalidRegexTokenException if null
+     */
     public RegexToNfaConverter(RegexToken regex){
         if(regex == null){
             throw new InvalidRegexTokenException("Regex token cannot be null");
@@ -30,10 +52,21 @@ public class RegexToNfaConverter {
         this.regex = regex;
     }
 
+
+    /**
+     * 
+     * @return
+     */
     public NFA convert(){
         return glushkovConstruction(this.regex);
 
     }
+
+    /**
+     * 
+     * @param regex
+     * @return
+     */
     private NFA glushkovConstruction(RegexToken regex){
         CurrentState cs = calculateCurrentState(regex);
 
@@ -59,6 +92,12 @@ public class RegexToNfaConverter {
         return nfa;       
     }
 
+
+    /**
+     * 
+     * @param regex
+     * @return
+     */
     private CurrentState calculateCurrentState(RegexToken regex){
         if(regex == null){
             throw new InvalidRegexTokenException("Regex token tree cannot contain a null token");
@@ -148,10 +187,24 @@ public class RegexToNfaConverter {
         throw new InvalidRegexTokenException("Invalid regex token tree");
     }
 
-    private void addTransition(Integer from, Character symbol, Integer to){
-        this.transitionMap.computeIfAbsent(from,r -> new HashMap<>()).computeIfAbsent(symbol,r-> new HashSet<>()).add(to);
+
+    /**
+     * Adds transitions to instance transitionMap using pasesed source, symbol and target
+     * 
+     * @param source source state id
+     * @param symbol transition symbol to add
+     * @param target target state id
+     */
+    private void addTransition(Integer source, Character symbol, Integer target){
+        this.transitionMap.computeIfAbsent(source,r -> new HashMap<>()).computeIfAbsent(symbol,r-> new HashSet<>()).add(target);
     }
 
+    /**
+     * Adds states and display labels to the stateLabelMap
+     * 
+     * e.g. state Id 0 would be added as <0,"q0">
+     * @param states set of states to add to stateLabelMap
+     */
     private void generateStateLabelMap(Set<Integer> states){
         for(Integer state : states){
             this.stateLabelMap.put(state,"q"+state);
