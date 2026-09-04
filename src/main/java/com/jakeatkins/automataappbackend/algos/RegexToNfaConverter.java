@@ -30,20 +30,21 @@ import com.jakeatkins.automataappbackend.validators.AutomataValidator;
  */
 public class RegexToNfaConverter {
     
-    private record CurrentState(boolean nullType, Set<Integer> firstPositions, Set<Integer> lastPositions){};
-    private final Map<Integer,Map<Character, Set<Integer>>> transitionMap = new HashMap<>();
-    private final Map<Integer,Character> symbolPositionMap = new HashMap<>();
-    private final static int NEW_START_STATE = 0;
-    private final Map<Integer,String> stateLabelMap = new HashMap<>();
-    private final RegexToken regex;
+    private record CurrentState(boolean nullType, Set<Integer> firstPositions, Set<Integer> lastPositions){}; // stores Glushkov properties(first positions, last positions, nullability)
+    private final Map<Integer,Map<Character, Set<Integer>>> transitionMap = new HashMap<>(); // NFA transitionMap
+    private final Map<Integer,Character> symbolPositionMap = new HashMap<>(); // maps regex symbol positions with its char
+    private final static int NEW_START_STATE = 0; // artificial starting state
+    private final Map<Integer,String> stateLabelMap = new HashMap<>(); // maps NFA state IDs with display labels
+    private final RegexToken regex; // RegexToken to be converted
     
     /**
      * Constructor for RegexToNfaConverter instance
      * 
+     * - checks passed RegexToken tree is not null
      * - Sets instance regex to the passed RegexToken
      * 
      * @param regex RegexToken tree to convert
-     * @throws InvalidRegexTokenException if null
+     * @throws InvalidRegexTokenException if regex is null
      */
     public RegexToNfaConverter(RegexToken regex){
         if(regex == null){
@@ -54,8 +55,8 @@ public class RegexToNfaConverter {
 
 
     /**
-     * 
-     * @return
+     * Converts the instance RegexToken tree into an NFA using the Glushkov construction
+     * @return converted NFA
      */
     public NFA convert(){
         return glushkovConstruction(this.regex);
@@ -63,9 +64,21 @@ public class RegexToNfaConverter {
     }
 
     /**
+     * The Glushkov construction algorithm that converts RegexToken tree into an NFA
      * 
-     * @param regex
-     * @return
+     * Process:
+     * - calculates CurrentState of passed RegexToken
+     * - adds a transition from the new start state to all the first positions
+     * - copies set of chars from symbolPositionMap to new NFA alphabet set
+     * - creates NFA states from the  symbol positions and adds the artificial start state (total number of states for Glushkov construction = number of symbol positions + 1)
+     * - sets the last positions of the CurrentState as accepting states
+     * - if the current state is nullable, sets the new start state to an accepting state 
+     * - generates display labels for the new states into the stateLabelMap
+     * - constructs new NFA
+     * - validates NFA
+     * 
+     * @param regex RegexToken tree to convert
+     * @return constructed NFA
      */
     private NFA glushkovConstruction(RegexToken regex){
         CurrentState cs = calculateCurrentState(regex);
@@ -94,15 +107,26 @@ public class RegexToNfaConverter {
 
 
     /**
+     * Calculates the Glushkov properties of a given RegexToken tree i.e. first positions, last positions, and nullability 
+     * and adds follow transitions to the instance transitionMap
      * 
-     * @param regex
-     * @return
+     * Process:
+     * - recursively checks the concrete class of the passed RegexToken:
+     *      - uses the construction rules from Chapter 4.2 of report for each RegexToken type
+     *      - adds relevant follow transitions to the instance transitionMap (for concat and starred)
+     *      - passes CurrentState up the recursion
+     * - returns a CurrentState containing the overall regex first positions, last positions, and nullability 
+     * 
+     * @param regex RegexToken tree to calculate
+     * @return CurrentState (first,last,nullability)
+     * @throws InvalidRegexTokenException if RegexToken is invalid
      */
     private CurrentState calculateCurrentState(RegexToken regex){
         if(regex == null){
             throw new InvalidRegexTokenException("Regex token tree cannot contain a null token");
         }
 
+        //nullable: false, first: position(r), last: position(r) 
         if(regex instanceof RegexSymbol r){
             Integer position = r.position();
             if(position == NEW_START_STATE || position < 1){
@@ -111,18 +135,28 @@ public class RegexToNfaConverter {
             if(symbolPositionMap.containsKey(position)){
                 throw new InvalidRegexTokenException("Invalid Regex Tree: duplicated positions found for symbol");
             }
+            //when a symbol is found, its position in the regex and its character is added to the symbolPositionMap
             symbolPositionMap.put(position, r.symbol());
             return new CurrentState(false,Set.of(position),Set.of(position));
         }
 
+        //nullable: true, 
+        // first: ∅, 
+        // last: ∅
         if(regex instanceof RegexEpsilon r){
             return new CurrentState(true, Collections.emptySet(), Collections.emptySet());
         }
 
+        //nullable: false, 
+        // first: ∅, 
+        // last: ∅
         if(regex instanceof RegexEmptySet r){
             return new CurrentState(false, Collections.emptySet(), Collections.emptySet());
         }
 
+        //nullable: nullable(left) || nullable(right), 
+        // first: first(left) U first(right), 
+        // last: last(left) U last(right)
         if(regex instanceof RegexUnion r){
             CurrentState left = calculateCurrentState(r.left());
             CurrentState right = calculateCurrentState(r.right());
@@ -138,6 +172,10 @@ public class RegexToNfaConverter {
 
         }
 
+        //nullable: nullable(left) && nullable(right), 
+        //first: if nullable(left) -> first(left) U first(right) : first(left), 
+        //last: if nullable(right) -> last(left) U last(right) : last(right)
+        //follow: last(left) -> first(right)
         if(regex instanceof RegexConcat r){
             CurrentState left = calculateCurrentState(r.left());
             CurrentState right = calculateCurrentState(r.right());
@@ -161,6 +199,7 @@ public class RegexToNfaConverter {
                 lastPositions = right.lastPositions();
             }
 
+            // adds transitions to the transitionMap from last(left)->first(right)
             for(Integer x : left.lastPositions()){
                 for(Integer y : right.firstPositions()){
                     addTransition(x, symbolPositionMap.get(y), y);
@@ -171,9 +210,14 @@ public class RegexToNfaConverter {
 
         }
 
+        // nullable: true, 
+        // first: first(r), 
+        // last: last(r), 
+        // follow: last(r)->first(r)
         if(regex instanceof RegexStarred r){
             CurrentState starred = calculateCurrentState(r.starredRegex());
 
+            // adds transitions to the transitionMap from last(r)->first(r)
             for(Integer x: starred.lastPositions()){
                 for(Integer y: starred.firstPositions()){
                     addTransition(x, symbolPositionMap.get(y), y);
@@ -189,7 +233,7 @@ public class RegexToNfaConverter {
 
 
     /**
-     * Adds transitions to instance transitionMap using pasesed source, symbol and target
+     * Adds transitions to instance transitionMap using passed source, symbol and target
      * 
      * @param source source state id
      * @param symbol transition symbol to add
